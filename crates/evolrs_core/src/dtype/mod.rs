@@ -1,18 +1,18 @@
 use std::{fmt::Debug, hash::Hash};
 
-pub trait Dtype: 'static + Debug + Clone + Copy + Send + Sync + PartialEq {
+pub trait Kind: 'static + Debug + Clone + Copy + Send + Sync + PartialEq {
     fn into_dtype() -> tch::Kind;
 }
 
-macro_rules! dtype {
+macro_rules! kind {
     (def $n:ident $t:ident) => {
         #[allow(non_camel_case_types)]
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
         pub struct $n;
-        dtype!($n $t);
+        kind!($n $t);
     };
     ($n:ident $t:ident) => {
-        impl Dtype for $n {
+        impl Kind for $n {
             fn into_dtype() -> tch::Kind {
                 tch::Kind::$t
             }
@@ -20,28 +20,28 @@ macro_rules! dtype {
     };
 }
 
-dtype!(u8 Uint8);
-dtype!(i8 Int8);
-dtype!(i16 Int16);
-dtype!(i32 Int);
-dtype!(i64 Int64);
+kind!(u8 Uint8);
+kind!(i8 Int8);
+kind!(i16 Int16);
+kind!(i32 Int);
+kind!(i64 Int64);
 
 #[cfg(feature = "half")]
 pub use half::f16;
 #[cfg(feature = "half")]
-dtype!(f16 Half);
+kind!(f16 Half);
 
-dtype!(f32 Float);
-dtype!(f64 Double);
-dtype!(bool Bool);
+kind!(f32 Float);
+kind!(f64 Double);
+kind!(bool Bool);
 
-dtype!(def c16 ComplexHalf);
-dtype!(def c32 ComplexFloat);
-dtype!(def c64 ComplexDouble);
-dtype!(def qi8 QInt8);
-dtype!(def qu8 QUInt8);
-dtype!(def qi32 QInt32);
-dtype!(def bf16 BFloat16);
+kind!(def c16 ComplexHalf);
+kind!(def c32 ComplexFloat);
+kind!(def c64 ComplexDouble);
+kind!(def qi8 QInt8);
+kind!(def qu8 QUInt8);
+kind!(def qi32 QInt32);
+kind!(def bf16 BFloat16);
 
 #[cfg(test)]
 mod tests {
