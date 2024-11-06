@@ -1,0 +1,17 @@
+[package]
+name = "evolrs_core"
+description = "Core crate for evolrs"
+authors = ["xupremix <xupremix.me@gmail.com>"]
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+readme.workspace = true
+
+[features]
+nightly = ["evolrs_macros/nightly"]
+half = ["evolrs_macros/half", "dep:half"]
+
+[dependencies]
+evolrs_macros = { path = "../evolrs_macros/", version = "*" }
+tch = { workspace = true }
+half = { version = "2.4.1", optional = true }
