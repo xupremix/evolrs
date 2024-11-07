@@ -1,6 +1,7 @@
 use std::{fmt::Debug, hash::Hash};
 
 pub trait Shape: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash {
+    type ArrayType: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash;
     const DIMS: usize;
     const NELEMS: usize;
     fn dims() -> &'static [i64];
@@ -22,12 +23,22 @@ macro_rules! shape {
     (@impl $Name:ident $($(, $Dim:ident)+)?) => {
         impl $(<$(const $Dim: usize,)+>)? Shape for
             $Name $(<$($Dim,)+>)? {
+            type ArrayType = shape!(@array $($($Dim)+)?);
             const DIMS: usize = shape!(@count $($($Dim)+)?);
             const NELEMS: usize = 0 $(+ 1 $( * $Dim)+)?;
             fn dims() -> &'static [i64] {
                 &[$( $($Dim as i64),* )?]
             }
         }
+    };
+    (@array) => {
+        [usize; 0]
+    };
+    (@array $x:tt) => {
+        [usize; $x]
+    };
+    (@array $x:tt $($xs:tt)+) => {
+        [shape!(@array $($xs)+); $x]
     };
     (@replace $x:tt $xs:expr) => {$xs};
     (@count $($x:tt)*) => {<[()]>::len(&[$(shape!(@replace $x ())),*])};
