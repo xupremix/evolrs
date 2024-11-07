@@ -1,9 +1,8 @@
 use std::fmt::Debug;
 use std::hash::Hash;
 
-pub trait Device:
-    'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash + Into<tch::Device>
-{
+pub trait Device: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash {
+    fn into_device() -> tch::Device;
 }
 
 macro_rules! device {
@@ -11,10 +10,9 @@ macro_rules! device {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
         pub struct $n $(<const $v: usize>)?;
 
-        impl $(<const $v: usize>)? Device for $n $(<$v>)? {}
-        impl $(<const $v: usize>)? From<$n $(<$v>)?> for tch::Device {
-            fn from(_: $n $(<$v>)? ) -> tch::Device {
-                Self::$t$(($v))?
+        impl $(<const $v: usize>)? Device for $n $(<$v>)? {
+            fn into_device() -> tch::Device {
+                tch::Device::$t$(($v))?
             }
         }
     };
@@ -34,7 +32,7 @@ mod tests {
             #[test]
             fn $n() {
                 assert_eq!(
-                    <$t$(<$v>)? as std::convert::Into<tch::Device>>::into($t),
+                    $t$(::<$v>)?::into_device(),
                     tch::Device::$t$(($v))?
                 );
             }

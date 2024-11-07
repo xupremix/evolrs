@@ -3,6 +3,7 @@ use std::{fmt::Debug, hash::Hash};
 pub trait Shape: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash {
     const DIMS: usize;
     const NELEMS: usize;
+    fn dims() -> &'static [i64];
 }
 
 macro_rules! shape {
@@ -23,6 +24,9 @@ macro_rules! shape {
             $Name $(<$($Dim,)+>)? {
             const DIMS: usize = shape!(@count $($($Dim)+)?);
             const NELEMS: usize = 0 $(+ 1 $( * $Dim)+)?;
+            fn dims() -> &'static [i64] {
+                &[$( $($Dim as i64),* )?]
+            }
         }
     };
     (@replace $x:tt $xs:expr) => {$xs};
