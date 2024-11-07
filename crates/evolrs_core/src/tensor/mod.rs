@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::{
     device::{Cpu, Device},
-    dtype::Kind,
+    kind::Kind,
     shapes::shape::Shape,
 };
 
@@ -21,6 +21,10 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
             device: PhantomData,
             dtype: PhantomData,
         }
+    }
+
+    pub fn to_tch(&self) -> &tch::Tensor {
+        &self.repr
     }
 
     pub fn zeros() -> Self {
