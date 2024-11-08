@@ -6,6 +6,7 @@ use crate::{
     shapes::shape::Shape,
 };
 
+#[must_use]
 pub struct Tensor<S: Shape, D: Device = Cpu, K: Kind = f32> {
     pub(crate) repr: tch::Tensor,
     pub(crate) shape: PhantomData<S>,
