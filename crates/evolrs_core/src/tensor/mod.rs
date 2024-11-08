@@ -62,6 +62,10 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
             dtype: PhantomData,
         }
     }
+
+    pub fn print(&self) {
+        self.repr.print();
+    }
 }
 
 impl<S: Shape, D: Device, K: Kind> Default for Tensor<S, D, K> {
@@ -69,3 +73,6 @@ impl<S: Shape, D: Device, K: Kind> Default for Tensor<S, D, K> {
         Self::new()
     }
 }
+
+#[cfg(test)]
+mod tests {}

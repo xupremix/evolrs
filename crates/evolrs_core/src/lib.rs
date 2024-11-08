@@ -5,4 +5,6 @@ pub mod ops;
 pub mod shapes;
 pub mod tensor;
 
+pub mod prelude {}
+
 pub use evolrs_macros::*;
