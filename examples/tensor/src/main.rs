@@ -1,11 +1,14 @@
 use evolrs::{
-    shapes::shape::{Rank1, Rank3},
-    tensor::Tensor,
+    device::Cpu,
+    kind::c32,
+    shapes::shape::Rank1,
+    tensor::{gen::logspace::LogspaceScalar, Tensor},
 };
 
 fn main() {
-    let t1: Tensor<Rank3<1, 2, 3>> = Tensor::ones();
-    let t2: Tensor<Rank1<6>> = t1.flatten();
-    let t2 = t2.flatten::<Rank1<6>>();
+    let t1: Tensor<Rank1<5>, Cpu, c32> = Tensor::logspace(10, 20, 2.0);
+    let t2: Tensor<Rank1<5>, Cpu, c32> = Tensor::logspace(10, 20, 2.0);
+    let t3 = t1 + t2;
+    t3.print();
     // println!("Hello, world!");
 }

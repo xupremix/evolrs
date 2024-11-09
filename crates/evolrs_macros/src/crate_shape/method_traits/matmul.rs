@@ -2,13 +2,15 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Ident;
 
-pub(crate) fn matmul(dims: usize, name: &Ident, dim_idents: &[Ident]) -> TokenStream {
+pub(crate) fn matmul(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStream {
     if dims < 2 {
         return quote! {};
     }
 
-    let all_but_last_two = (0..dims - 2).map(|i| &dim_idents[i]).collect::<Vec<_>>();
-    let penultimate_of_second = &dim_idents[dims - 2];
+    let all_but_last_two = (0..dims - 2)
+        .map(|i| &dim_idents[i as usize])
+        .collect::<Vec<_>>();
+    let penultimate_of_second = &dim_idents[dims as usize - 2];
     let last_of_first = Ident::new(&format!("N_D{}", dims - 1), proc_macro2::Span::call_site());
     let last_of_second = Ident::new(&format!("D{}", dims - 1), proc_macro2::Span::call_site());
 

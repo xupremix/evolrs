@@ -9,7 +9,7 @@ mod parse_args;
 pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let args = syn::parse_macro_input!(input as Args);
     let vis = args.vis;
-    let dims: usize = args.dims.base10_parse().expect("expected integer literal");
+    let dims: i64 = args.dims.base10_parse().expect("expected integer literal");
 
     let name = if dims == 0 {
         Ident::new("Scalar", proc_macro2::Span::call_site())
@@ -40,7 +40,7 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
         impl #const_generics Shape for #name #generics {
             type Shape = #shape;
-            const DIMS: usize = #dims;
+            const DIMS: i64 = #dims;
             const NELEMS: usize = #nelems;
             fn dims() -> &'static [i64] {
                 &[#( #dim_idents as i64 ),*]
@@ -52,7 +52,7 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     .into()
 }
 
-fn gen_shape(dims: usize, curr: usize) -> TokenStream {
+fn gen_shape(dims: i64, curr: usize) -> TokenStream {
     let dim = Ident::new(&format!("D{}", curr), proc_macro2::Span::call_site());
     if dims == 0 {
         return quote! { [usize; #dim] };
@@ -63,7 +63,7 @@ fn gen_shape(dims: usize, curr: usize) -> TokenStream {
     }
 }
 
-fn generics(dims: usize, dim_idents: &[Ident]) -> (TokenStream, TokenStream) {
+fn generics(dims: i64, dim_idents: &[Ident]) -> (TokenStream, TokenStream) {
     if dims == 0 {
         return (quote! {}, quote! {});
     }

@@ -1,5 +1,8 @@
 use std::marker::PhantomData;
 
+pub mod gen;
+pub mod wrap;
+
 use crate::{
     device::{Cpu, Device},
     kind::Kind,
@@ -15,53 +18,8 @@ pub struct Tensor<S: Shape, D: Device = Cpu, K: Kind = f32> {
 }
 
 impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
-    pub fn new() -> Self {
-        Self {
-            repr: tch::Tensor::new(),
-            shape: PhantomData,
-            device: PhantomData,
-            dtype: PhantomData,
-        }
-    }
-
     pub fn to_tch(&self) -> &tch::Tensor {
         &self.repr
-    }
-
-    pub fn zeros() -> Self {
-        Self {
-            repr: tch::Tensor::zeros(S::dims(), (K::into_dtype(), D::into_device())),
-            shape: PhantomData,
-            device: PhantomData,
-            dtype: PhantomData,
-        }
-    }
-
-    pub fn zeros_like(&self) -> Self {
-        Self {
-            repr: tch::Tensor::zeros_like(&self.repr),
-            shape: PhantomData,
-            device: PhantomData,
-            dtype: PhantomData,
-        }
-    }
-
-    pub fn ones() -> Self {
-        Self {
-            repr: tch::Tensor::ones(S::dims(), (K::into_dtype(), D::into_device())),
-            shape: PhantomData,
-            device: PhantomData,
-            dtype: PhantomData,
-        }
-    }
-
-    pub fn ones_like(&self) -> Self {
-        Self {
-            repr: tch::Tensor::ones_like(&self.repr),
-            shape: PhantomData,
-            device: PhantomData,
-            dtype: PhantomData,
-        }
     }
 
     pub fn print(&self) {
@@ -71,7 +29,12 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
 
 impl<S: Shape, D: Device, K: Kind> Default for Tensor<S, D, K> {
     fn default() -> Self {
-        Self::new()
+        Self {
+            repr: tch::Tensor::default(),
+            shape: PhantomData,
+            device: PhantomData,
+            dtype: PhantomData,
+        }
     }
 }
 

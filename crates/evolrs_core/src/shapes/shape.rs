@@ -4,7 +4,7 @@ use evolrs_macros::crate_shape;
 
 pub trait Shape: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash {
     type Shape: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash;
-    const DIMS: usize;
+    const DIMS: i64;
     const NELEMS: usize;
     fn dims() -> &'static [i64];
 }
