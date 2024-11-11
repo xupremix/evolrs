@@ -1,13 +1,10 @@
 use evolrs::{
-    device::Cpu,
-    kind::{c16, c32, c64, f16},
-    shapes::shape::{Rank1, Rank2, Rank3},
-    tensor::{gen::logspace::LogspaceScalar, wrap::item::Item, Tensor},
+    shapes::shape::{Rank2, Rank3},
+    tensor::Tensor,
 };
 
 fn main() {
-    let t: Tensor<Rank3<1, 1, 1>, Cpu, f16> = Tensor::rand();
-    let v = t.item();
-    println!("{:?}", v);
-    t.print();
+    let t: Tensor<Rank2<3, 2>> = Tensor::rand();
+    let t2 = t.broadcast::<Rank3<4, 3, 2>>();
+    t2.print();
 }

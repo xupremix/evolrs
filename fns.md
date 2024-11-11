@@ -1,0 +1,2 @@
+- T() reverses the dimensions of a 2d tensor
+- H() 2d tensor conjugated and transposed
