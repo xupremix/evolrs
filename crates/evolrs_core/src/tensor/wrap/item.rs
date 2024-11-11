@@ -30,3 +30,8 @@ macro_rules! def_item {
 
 def_item!(f64 => double_value f32, f64);
 def_item!(i64 => int64_value u8, i8, i16, i32, i64, qi8, qu8, qi32);
+
+#[cfg(feature = "half")]
+use crate::kind::f16;
+#[cfg(feature = "half")]
+def_item!(f64 => double_value f16);
