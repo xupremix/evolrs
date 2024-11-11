@@ -8,6 +8,7 @@ pub mod eye;
 pub mod full;
 pub mod linspace;
 pub mod logspace;
+pub mod rand;
 
 impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
     pub fn new() -> Self {

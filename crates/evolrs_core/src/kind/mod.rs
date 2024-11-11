@@ -43,6 +43,30 @@ kind!(def qu8 QUInt8);
 kind!(def qi32 QInt32);
 kind!(def bf16 BFloat16);
 
+pub(crate) trait IntOrFloat: Kind {}
+macro_rules! impl_int_or_float {
+    ($($t:ty),*) => {
+        $(
+            impl IntOrFloat for $t {}
+        )*
+    };
+}
+impl_int_or_float!(i8, i16, i32, i64, u8, f32, f64);
+#[cfg(feature = "half")]
+impl_int_or_float!(f16);
+
+pub(crate) trait Rand: Kind {}
+macro_rules! impl_rand {
+    ($($t:ty),*) => {
+        $(
+            impl Rand for $t {}
+        )*
+    };
+}
+impl_rand!(f32, f64, c32, c16, c64);
+#[cfg(feature = "half")]
+impl_rand!(f16);
+
 #[cfg(test)]
 mod tests {
     use super::*;
