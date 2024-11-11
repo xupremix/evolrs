@@ -1,11 +1,6 @@
-use crate::{
-    device::Device,
-    kind::{IntOrFloat, Kind},
-    shapes::shape::Shape,
-    tensor::Tensor,
-};
+use crate::{device::Device, kind::IntOrFloat, shapes::shape::Shape, tensor::Tensor};
 
-impl<S: Shape, D: Device, K: Kind + IntOrFloat> Tensor<S, D, K> {
+impl<S: Shape, D: Device, K: IntOrFloat> Tensor<S, D, K> {
     pub fn randint(low: i64, high: i64) -> Self {
         Self {
             repr: tch::Tensor::randint_low(

@@ -1,11 +1,6 @@
-use crate::{
-    device::Device,
-    kind::{Kind, Rand},
-    shapes::shape::Shape,
-    tensor::Tensor,
-};
+use crate::{device::Device, kind::FloatOrComplex, shapes::shape::Shape, tensor::Tensor};
 
-impl<S: Shape, D: Device, K: Kind + Rand> Tensor<S, D, K> {
+impl<S: Shape, D: Device, K: FloatOrComplex> Tensor<S, D, K> {
     pub fn randn() -> Self {
         Self {
             repr: tch::Tensor::randn(S::dims(), (K::into_dtype(), D::into_device())),

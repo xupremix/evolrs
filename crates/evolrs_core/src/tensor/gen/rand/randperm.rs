@@ -1,9 +1,4 @@
-use crate::{
-    device::Device,
-    kind::{Kind, Rand},
-    shapes::shape::{Rank1, Shape},
-    tensor::Tensor,
-};
+use crate::{device::Device, kind::Kind, shapes::shape::Rank1, tensor::Tensor};
 
 impl<const PERMS: usize, D: Device, K: Kind> Tensor<Rank1<PERMS>, D, K> {
     pub fn randperm() -> Self {

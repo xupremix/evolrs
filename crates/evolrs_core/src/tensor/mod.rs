@@ -18,12 +18,20 @@ pub struct Tensor<S: Shape, D: Device = Cpu, K: Kind = f32> {
 }
 
 impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
+    pub fn dims(&self) -> i64 {
+        S::DIMS
+    }
+
+    pub fn nelems(&self) -> usize {
+        S::NELEMS
+    }
+
     pub fn to_tch(&self) -> &tch::Tensor {
         &self.repr
     }
 
-    pub fn print(&self) {
-        self.repr.print();
+    pub fn to_tch_mut(&mut self) -> &mut tch::Tensor {
+        &mut self.repr
     }
 }
 
