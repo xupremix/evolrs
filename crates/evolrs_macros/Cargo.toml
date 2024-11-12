@@ -9,6 +9,7 @@ readme.workspace = true
 
 [features]
 nightly = []
+broadcast-semantics = []
 half = ["dep:half"]
 
 [lib]

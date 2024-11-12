@@ -19,11 +19,12 @@ readme = "README.md"
 license = "MIT or Apache-2.0"
 
 [features]
-default = []
+default = ["broadcast-semantics"]
 
-all = ["nightly", "half"]
-non-nightly = ["half"]
+all = ["nightly", "half", "broadcast-semantics"]
+non-nightly = ["half", "broadcast-semantics"]
 
+broadcast-semantics = ["evolrs_core/broadcast-semantics"]
 nightly = ["evolrs_core/nightly"]
 half = ["evolrs_core/half"]
 

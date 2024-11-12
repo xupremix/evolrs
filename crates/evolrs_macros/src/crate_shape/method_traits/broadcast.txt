@@ -3,7 +3,7 @@ use quote::quote;
 use syn::Ident;
 
 pub(crate) fn broadcast(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStream {
-    if dims < 1 {
+    if dims < 2 {
         return quote! {};
     }
 
@@ -67,27 +67,28 @@ pub(crate) fn broadcast(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenS
             shape_curr, shape_gen
         );
 
-        let assert_check = gen_assert_check(curr_dim, dims);
+        let assert_check_gen = gen_assert_check(curr_dim, dims, true);
 
         toks.push(quote! {
             impl<
                 #const_dims
-                > crate::shapes::broadcast::Broadcast<
+                > crate::ops::method_traits::broadcast::Broadcast<
                     #shape_gen < #(#idents_gen),* >
                 > for #shape_curr < #(#idents_curr),* > {
-                const CHECK: () = assert!(#assert_check, #assert_msg);
+                const CHECK: () = assert!(#assert_check_gen, #assert_msg);
                 type BroadcastShape = #shape_gen < #(#idents_gen),* >;
             }
         });
         if curr_dim != dims {
+            let assert_check_curr = gen_assert_check(curr_dim, dims, false);
             toks.push(quote! {
                 impl<
                     #const_dims
-                > crate::shapes::broadcast::Broadcast<
+                    > crate::ops::method_traits::broadcast::Broadcast<
                     #shape_curr < #(#idents_curr),* >
                     > for #shape_gen < #(#idents_gen),* > {
-                    const CHECK: () = assert!(#assert_check, #assert_msg);
-                    type BroadcastShape = #shape_gen < #(#idents_gen),* >;
+                    const CHECK: () = assert!(#assert_check_curr, #assert_msg);
+                    type BroadcastShape = #shape_curr < #(#idents_curr),* >;
                 }
             });
         }
@@ -98,7 +99,7 @@ pub(crate) fn broadcast(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenS
     }
 }
 
-fn gen_assert_check(mut curr_dim: i64, mut dims: i64) -> TokenStream {
+fn gen_assert_check(mut curr_dim: i64, mut dims: i64, gen: bool) -> TokenStream {
     // Reminder:
     // broadcast requirements:
     // When iterating over the dimension sizes, starting at the trailing dimension the dimension sizes must either be:
@@ -112,9 +113,15 @@ fn gen_assert_check(mut curr_dim: i64, mut dims: i64) -> TokenStream {
         }
         let dim_curr = Ident::new(&format!("D{}", curr_dim - 1), Span::call_site());
         let dim_gen = Ident::new(&format!("G_D{}", dims - 1), Span::call_site());
-        toks.push(quote! {
-            (#dim_curr == #dim_gen || #dim_gen == 1 || #dim_curr == 1 ) &&
-        });
+        if gen {
+            toks.push(quote! {
+                (#dim_curr == #dim_gen || #dim_gen == 1 ) &&
+            });
+        } else {
+            toks.push(quote! {
+                (#dim_curr == #dim_gen || #dim_curr == 1 ) &&
+            });
+        }
         curr_dim -= 1;
         dims -= 1;
     }

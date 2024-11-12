@@ -4,6 +4,7 @@ pub mod nn;
 pub mod ops;
 pub mod shapes;
 pub mod tensor;
+pub use tch;
 
 pub mod prelude {}
 

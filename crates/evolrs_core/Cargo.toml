@@ -10,6 +10,7 @@ readme.workspace = true
 [features]
 nightly = ["evolrs_macros/nightly"]
 half = ["evolrs_macros/half", "dep:half"]
+broadcast-semantics = ["evolrs_macros/broadcast-semantics"]
 
 [dependencies]
 evolrs_macros = { path = "../evolrs_macros/", version = "*" }
