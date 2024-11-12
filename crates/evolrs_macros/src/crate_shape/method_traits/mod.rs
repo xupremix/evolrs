@@ -10,7 +10,7 @@ pub(crate) fn gen_methods(dims: i64, name: &Ident, dim_idents: &[Ident]) -> Toke
     let matmul = matmul::matmul(dims, name, dim_idents);
 
     #[cfg(feature = "broadcast-semantics")]
-    let broadcast = broadcast::broadcast(dims, name, dim_idents);
+    let broadcast = broadcast::broadcast(dims, name);
 
     quote! {
         #matmul
