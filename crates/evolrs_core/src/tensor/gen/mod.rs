@@ -4,6 +4,7 @@ use crate::tensor::Shape;
 use crate::tensor::Tensor;
 
 pub mod arange;
+pub mod dist;
 pub mod eye;
 pub mod full;
 pub mod linspace;

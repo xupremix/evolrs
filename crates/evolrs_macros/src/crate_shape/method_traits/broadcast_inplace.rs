@@ -2,7 +2,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Ident;
 
-pub(crate) fn broadcast(dims: i64, name: &Ident) -> TokenStream {
+pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
     if dims < 1 {
         return quote! {};
     }
@@ -58,22 +58,22 @@ pub(crate) fn broadcast(dims: i64, name: &Ident) -> TokenStream {
         toks.push(quote! {
             impl<
                 #const_dims
-                > crate::shapes::broadcast::Broadcast<
+                > crate::shapes::broadcast::BroadcastInplace<
                     #shape_curr < #(#idents),* >,
                     #shape_gen < #(#idents_d),* >
                 > for #shape_gen < #(#idents_g),* > {
-                const BROADCAST_CHECK: () = assert!(#assert_check, #assert_msg);
+                const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
             }
         });
         if curr_dim != dims {
             toks.push(quote! {
                 impl<
                     #const_dims
-                > crate::shapes::broadcast::Broadcast<
+                > crate::shapes::broadcast::BroadcastInplace<
                         #shape_gen < #(#idents_g),* >,
                         #shape_gen < #(#idents_d),* >
                     > for #shape_curr < #(#idents),* > {
-                    const BROADCAST_CHECK: () = assert!(#assert_check, #assert_msg);
+                const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
                 }
             });
         }
@@ -104,7 +104,7 @@ fn gen_assert_check(mut curr_dim: i64, mut dims: i64) -> TokenStream {
         }
         let dim = Ident::new(&format!("D{}", curr_dim - 1), Span::call_site());
         toks.push(quote! {
-            (#dim == #dim_g || #dim == 1 || #dim_g == 1 ) &&
+            (#dim == #dim_g || #dim == 1 /* || #dim_g == 1 */ ) &&
             (#dim_d >= #dim_g && #dim_d >= #dim) &&
             (#dim_d == #dim_g || #dim_d == #dim) &&
         });

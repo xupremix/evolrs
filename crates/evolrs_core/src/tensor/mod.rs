@@ -46,5 +46,15 @@ impl<S: Shape, D: Device, K: Kind> Default for Tensor<S, D, K> {
     }
 }
 
+// TODO: check that it actually works as intended as there is no .clone impl
+impl<S: Shape, D: Device, K: Kind> Clone for Tensor<S, D, K> {
+    fn clone(&self) -> Self {
+        Self {
+            repr: self.repr.copy(),
+            ..Default::default()
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {}
