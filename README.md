@@ -8,4 +8,4 @@ unset LIBTORCH
 export LIBTORCH=/usr/lib/libtorch
 export LD_LIBRARY_PATH=/urs/lib/libtorch/lib:$LD_LIBRARY_PATH
 source ~/.bashrc
-cargo t --workspace
+cargo t
