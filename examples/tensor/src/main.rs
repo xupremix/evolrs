@@ -19,7 +19,8 @@ fn main() {
     // Example of flattening
     let t: Tensor<Rank3<1, 2, 2>, Cpu, c32> = Tensor::rand();
     let flattened = t.flatten::<Rank1<4>>();
-    let flattened2 = t.flatten_n::<4>();
+    // let flattened2 = t.flatten_n::<3>();
+    // let flattened3 = t.flatten_n::<6>();
     flattened.print();
     flattened2.print();
 
