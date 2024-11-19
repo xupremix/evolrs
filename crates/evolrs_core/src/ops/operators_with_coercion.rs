@@ -45,16 +45,6 @@ macro_rules! operator {
                 }
             }
         }
-        // impl<S: Shape, D: Device, K: Kind> std::ops::$assign_trait for Tensor<S, D, K> {
-        //     fn $assign_method(&mut self, rhs: Self) {
-        //         let _ = self.repr.$tch_assign_method(&rhs.repr);
-        //     }
-        // }
-        // impl<S: Shape, D: Device, K: Kind> std::ops::$assign_trait<&Self> for Tensor<S, D, K> {
-        //     fn $assign_method(&mut self, rhs: &Self) {
-        //         let _ = self.repr.$tch_assign_method(&rhs.repr);
-        //     }
-        // }
     };
 }
 
@@ -697,4 +687,35 @@ def_div! {
     f16 => c32 => c32,
     f16 => c64 => c64,
     f16 => bool => f16,
+}
+
+macro_rules! def_assign {
+    ($trait:ident $method:ident $tch_method:ident $($type:ty)+) => {
+        $(
+            impl<S: Shape, D: Device> std::ops::$trait<Tensor<S, D, $type>> for Tensor<S, D, $type> {
+                fn $method(&mut self, rhs: Tensor<S, D, $type>) {
+                    let _ = self.repr.$tch_method(&rhs.repr);
+                }
+            }
+            impl<S: Shape, D: Device> std::ops::$trait<&Tensor<S, D, $type>> for Tensor<S, D, $type> {
+                fn $method(&mut self, rhs: &Tensor<S, D, $type>) {
+                    let _ = self.repr.$tch_method(&rhs.repr);
+                }
+            }
+        )+
+    };
+}
+
+def_assign!(AddAssign add_assign g_add_ u8 i8 i16 i32 i64 f32 f64 c16 c32 c64 bool);
+def_assign!(SubAssign sub_assign g_sub_ u8 i8 i16 i32 i64 f32 f64 c16 c32 c64 bool);
+def_assign!(MulAssign mul_assign g_mul_ u8 i8 i16 i32 i64 f32 f64 c16 c32 c64 bool);
+def_assign!(DivAssign div_assign g_div_ u8 i8 i16 i32 i64 f32 f64 c16 c32 c64 bool);
+
+#[cfg(feature = "half")]
+mod assign_half {
+    use super::*;
+    def_assign!(AddAssign add_assign g_add_ f16);
+    def_assign!(SubAssign sub_assign g_sub_ f16);
+    def_assign!(MulAssign mul_assign g_mul_ f16);
+    def_assign!(DivAssign div_assign g_div_ f16);
 }
