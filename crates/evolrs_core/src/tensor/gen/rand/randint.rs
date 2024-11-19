@@ -1,4 +1,6 @@
-use crate::{device::Device, kind::IntOrFloat, shapes::shape::Shape, tensor::Tensor};
+use crate::{
+    device::Device, kind::restriction::composite::IntOrFloat, shapes::shape::Shape, tensor::Tensor,
+};
 
 impl<S: Shape, D: Device, K: IntOrFloat> Tensor<S, D, K> {
     pub fn randint(low: i64, high: i64) -> Self {

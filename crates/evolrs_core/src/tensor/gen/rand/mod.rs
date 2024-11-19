@@ -1,4 +1,7 @@
-use crate::{device::Device, kind::FloatOrComplex, shapes::shape::Shape, tensor::Tensor};
+use crate::{
+    device::Device, kind::restriction::composite::FloatOrComplex, shapes::shape::Shape,
+    tensor::Tensor,
+};
 
 pub mod randint;
 pub mod randn;

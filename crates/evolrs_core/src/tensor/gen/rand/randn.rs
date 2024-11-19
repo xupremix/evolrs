@@ -1,4 +1,7 @@
-use crate::{device::Device, kind::FloatOrComplex, shapes::shape::Shape, tensor::Tensor};
+use crate::{
+    device::Device, kind::restriction::composite::FloatOrComplex, shapes::shape::Shape,
+    tensor::Tensor,
+};
 
 impl<S: Shape, D: Device, K: FloatOrComplex> Tensor<S, D, K> {
     pub fn randn() -> Self {

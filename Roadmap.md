@@ -9,3 +9,35 @@
 - Appropriate tensor apis  
 - Exact Dataset Iterators  
 - Model type definition macro for importing  
+
+# Tensor API implementations necessary before layer implementation
+add
+sub
+div
+mul
+
+random
+
+argmax
+argmin
+
+backward
+
+copy
+detach
+dim
+numel
+
+eq
+ne
+equal
+not_equal
+
+item
+
+dot
+mm
+multiply
+
+unsqueeze
+squeeze
