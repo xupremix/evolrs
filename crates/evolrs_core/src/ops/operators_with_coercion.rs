@@ -719,3 +719,6 @@ mod assign_half {
     def_assign!(MulAssign mul_assign g_mul_ f16);
     def_assign!(DivAssign div_assign g_div_ f16);
 }
+
+#[cfg(test)]
+mod tests {}
