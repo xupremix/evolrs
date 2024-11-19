@@ -391,8 +391,310 @@ def_op!(addmod Add add g_add);
 def_op!(submod Sub sub g_sub);
 def_op!(mulmod Mul mul g_mul);
 
-// macro_rules! def_div {
-//     () => {
-//
-//     };
-// }
+macro_rules! def_div {
+    ($($rhs:ty => $lhs:ty => $out:ty),* $(,)?) => {
+        $(
+            impl<S: Shape, D: Device> std::ops::Div<Tensor<S, D, $rhs>> for Tensor<S, D, $lhs> {
+                type Output = Tensor<S, D, $out>;
+                fn div(self, rhs: Tensor<S, D, $rhs>) -> Self::Output {
+                    Tensor {
+                        repr: self.repr.g_div(&rhs.repr),
+                        ..Default::default()
+                    }
+                }
+            }
+            impl<S: Shape, D: Device> std::ops::Div<&Tensor<S, D, $rhs>> for Tensor<S, D, $lhs> {
+                type Output = Tensor<S, D, $out>;
+                fn div(self, rhs: &Tensor<S, D, $rhs>) -> Self::Output {
+                    Tensor {
+                        repr: self.repr.g_div(&rhs.repr),
+                        ..Default::default()
+                    }
+                }
+            }
+            impl<S: Shape, D: Device> std::ops::Div<&Tensor<S, D, $rhs>> for &Tensor<S, D, $lhs> {
+                type Output = Tensor<S, D, $out>;
+
+                fn div(self, rhs: &Tensor<S, D, $rhs>) -> Self::Output {
+                    Tensor {
+                        repr: self.repr.g_div(&rhs.repr),
+                        ..Default::default()
+                    }
+                }
+            }
+            impl<S: Shape, D: Device> std::ops::Div<Tensor<S, D, $rhs>> for &Tensor<S, D, $lhs> {
+                type Output = Tensor<S, D, $out>;
+
+                fn div(self, rhs: Tensor<S, D, $rhs>) -> Self::Output {
+                    Tensor {
+                        repr: self.repr.g_div(&rhs.repr),
+                        ..Default::default()
+                    }
+                }
+            }
+        )*
+    };
+}
+
+/*
+Bool / Uint8 = Float
+Bool / Int8 = Float
+Bool / Int16 = Float
+Bool / Int = Float
+Bool / Int64 = Float
+Bool / Half = Half
+Bool / Float = Float
+Bool / Double = Double
+Bool / Bool = Float
+
+Uint8 / Int8 = Float
+Uint8 / Bool = Float
+Uint8 / Int16 = Float
+Uint8 / Int = Float
+Uint8 / Int64 = Float
+Uint8 / Half = Half
+Uint8 / Float = Float
+Uint8 / Double = Double
+Uint8 / ComplexFloat = ComplexFloat
+Uint8 / ComplexDouble = ComplexDouble
+Uint8 / Uint8 = Float
+
+Int8 / Uint8 = Float
+Int8 / Bool = Float
+Int8 / Int16 = Float
+Int8 / Int = Float
+Int8 / Int64 = Float
+Int8 / Half = Half
+Int8 / Float = Float
+Int8 / Double = Double
+Int8 / ComplexFloat = ComplexFloat
+Int8 / ComplexDouble = ComplexDouble
+Int8 / Int8 = Float
+
+Int16 / Uint8 = Float
+Int16 / Bool = Float
+Int16 / Int8 = Float
+Int16 / Int = Float
+Int16 / Int64 = Float
+Int16 / Half = Half
+Int16 / Float = Float
+Int16 / Double = Double
+Int16 / ComplexFloat = ComplexFloat
+Int16 / ComplexDouble = ComplexDouble
+Int16 / Int16 = Float
+
+Int / Uint8 = Float
+Int / Bool = Float
+Int / Int8 = Float
+Int / Int16 = Float
+Int / Int64 = Float
+Int / Half = Half
+Int / Float = Float
+Int / Double = Double
+Int / ComplexFloat = ComplexFloat
+Int / ComplexDouble = ComplexDouble
+Int / Int = Float
+
+Int64 / Uint8 = Float
+Int64 / Bool = Float
+Int64 / Int8 = Float
+Int64 / Int16 = Float
+Int64 / Int = Float
+Int64 / Half = Half
+Int64 / Float = Float
+Int64 / Double = Double
+Int64 / ComplexFloat = ComplexFloat
+Int64 / ComplexDouble = ComplexDouble
+Int64 / Int64 = Float
+
+Half / Int = Half
+Half / Bool = Half
+Half / Float = Float
+Half / Double = Double
+Half / Uint8 = Half
+Half / Int8 = Half
+Half / Int16 = Half
+Half / ComplexFloat = ComplexFloat
+Half / ComplexDouble = ComplexDouble
+Half / Int64 = Half
+Half / Half = Half
+
+Float / Int64 = Float
+Float / Bool = Float
+Float / Half = Float
+Float / Double = Double
+Float / ComplexFloat = ComplexFloat
+Float / ComplexDouble = ComplexDouble
+Float / Int = Float
+Float / Uint8 = Float
+Float / Int8 = Float
+Float / Int16 = Float
+Float / Float = Float
+
+Double / Int = Double
+Double / Bool = Double
+Double / Int64 = Double
+Double / Half = Double
+Double / Float = Double
+Double / Uint8 = Double
+Double / Int8 = Double
+Double / Int16 = Double
+Double / ComplexFloat = ComplexDouble
+Double / ComplexDouble = ComplexDouble
+Double / Double = Double
+
+ComplexFloat / Half = ComplexFloat
+ComplexFloat / Bool = ComplexFloat
+ComplexFloat / Float = ComplexFloat
+ComplexFloat / Double = ComplexDouble
+ComplexFloat / ComplexDouble = ComplexDouble
+ComplexFloat / Int64 = ComplexFloat
+ComplexFloat / Int = ComplexFloat
+ComplexFloat / Int8 = ComplexFloat
+ComplexFloat / Int16 = ComplexFloat
+ComplexFloat / Uint8 = ComplexFloat
+ComplexFloat / ComplexFloat = ComplexFloat
+
+ComplexDouble / Uint8 = ComplexDouble
+ComplexDouble / Bool = ComplexDouble
+ComplexDouble / Int8 = ComplexDouble
+ComplexDouble / Int16 = ComplexDouble
+ComplexDouble / Int = ComplexDouble
+ComplexDouble / Int64 = ComplexDouble
+ComplexDouble / Half = ComplexDouble
+ComplexDouble / Float = ComplexDouble
+ComplexDouble / Double = ComplexDouble
+ComplexDouble / ComplexFloat = ComplexDouble
+ComplexDouble / ComplexDouble = ComplexDouble
+*/
+def_div! {
+    u8 => u8 => f32,
+    u8 => i8 => f32,
+    u8 => i16 => f32,
+    u8 => i32 => f32,
+    u8 => i64 => f32,
+    u8 => f32 => f32,
+    u8 => f64 => f64,
+    u8 => c32 => c32,
+    u8 => c64 => c64,
+    u8 => bool => f32,
+
+    i8 => u8 => f32,
+    i8 => i8 => f32,
+    i8 => i16 => f32,
+    i8 => i32 => f32,
+    i8 => i64 => f32,
+    i8 => f32 => f32,
+    i8 => f64 => f64,
+    i8 => c32 => c32,
+    i8 => c64 => c64,
+    i8 => bool => f32,
+
+    i16 => u8 => f32,
+    i16 => i8 => f32,
+    i16 => i16 => f32,
+    i16 => i32 => f32,
+    i16 => i64 => f32,
+    i16 => f32 => f32,
+    i16 => f64 => f64,
+    i16 => c32 => c32,
+    i16 => c64 => c64,
+    i16 => bool => f32,
+
+    i32 => u8 => f32,
+    i32 => i8 => f32,
+    i32 => i16 => f32,
+    i32 => i32 => f32,
+    i32 => i64 => f32,
+    i32 => f32 => f32,
+    i32 => f64 => f64,
+    i32 => c32 => c32,
+    i32 => c64 => c64,
+    i32 => bool => f32,
+
+    i64 => u8 => f32,
+    i64 => i8 => f32,
+    i64 => i16 => f32,
+    i64 => i32 => f32,
+    i64 => i64 => f32,
+    i64 => f32 => f32,
+    i64 => f64 => f64,
+    i64 => c32 => c32,
+    i64 => c64 => c64,
+    i64 => bool => f32,
+
+    f32 => i32 => f32,
+    f32 => i64 => f32,
+    f32 => f32 => f32,
+    f32 => f64 => f64,
+    f32 => c16 => c32,
+    f32 => c32 => c32,
+    f32 => c64 => c64,
+    f32 => bool => f32,
+    f32 => u8 => f32,
+    f32 => i8 => f32,
+    f32 => i16 => f32,
+
+    f64 => i32 => f64,
+    f64 => i64 => f64,
+    f64 => f32 => f64,
+    f64 => f64 => f64,
+    f64 => c16 => c64,
+    f64 => c32 => c64,
+    f64 => c64 => c64,
+    f64 => bool => f64,
+    f64 => u8 => f64,
+    f64 => i8 => f64,
+    f64 => i16 => f64,
+
+    c16 => f32 => c32,
+    c16 => bool => c16,
+    c16 => f64 => c64,
+    c16 => c16 => c16,
+    c16 => c32 => c32,
+    c16 => c64 => c64,
+    c16 => u8 => c16,
+    c16 => i8 => c16,
+    c16 => i16 => c16,
+    c16 => i32 => c16,
+
+    c32 => f32 => c32,
+    c32 => bool => c32,
+    c32 => f64 => c64,
+    c32 => c16 => c32,
+    c32 => c32 => c32,
+    c32 => c64 => c64,
+    c32 => u8 => c32,
+    c32 => i8 => c32,
+    c32 => i16 => c32,
+    c32 => i32 => c32,
+}
+#[cfg(feature = "half")]
+use crate::kind::f16;
+#[cfg(feature = "half")]
+def_div! {
+    u8 => f16 => f16,
+    i8 => f16 => f16,
+    i16 => f16 => f16,
+    i32 => f16 => f16,
+    i64 => f16 => f16,
+    f16 => f16 => f16,
+    f32 => f16 => f32,
+    f64 => f16 => f64,
+    c16 => f16 => c16,
+    c32 => f16 => c32,
+    c64 => f16 => c64,
+    bool => f16 => f16,
+
+    f16 => u8 => f16,
+    f16 => i8 => f16,
+    f16 => i16 => f16,
+    f16 => i32 => f16,
+    f16 => i64 => f16,
+    f16 => f32 => f16,
+    f16 => f64 => f16,
+    f16 => c16 => c16,
+    f16 => c32 => c32,
+    f16 => c64 => c64,
+    f16 => bool => f16,
+}

@@ -26,18 +26,15 @@ fn main() {
     }
     // create all the possible lhs and rhs combinations
 
-    permuatations!(Uint8 => "Uint8" => Int8 => "Int8" => Int16 => "Int16" => Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" );
-    // permuatations!(Int8 => "Int8" => Int16 => "Int16" => Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(Int16 => "Int16" => Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(Half => "Half" => Float => "Float" => Double => "Double" => ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(Float => "Float" => Double => "Double" => ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(Double => "Double" => ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(ComplexHalf => "ComplexHalf" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-    // permuatations!(ComplexDouble => "ComplexDouble" => Bool => "Bool" );
-
+    permuatations!(Uint8 => "Uint8" => Int8 => "Int8" => Int16 => "Int16" => Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
+    permuatations!(Int8 => "Int8" => Int16 => "Int16" => Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool");
+    permuatations!(Int16 => "Int16" => Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble"  => Bool => "Bool");
+    permuatations!(Int => "Int" => Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
+    permuatations!(Int64 => "Int64" => Half => "Half" => Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
+    permuatations!(Half => "Half" => Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
+    permuatations!(Float => "Float" => Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" => Bool => "Bool" );
+    permuatations!(Double => "Double" => ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble"  => Bool => "Bool");
+    permuatations!(ComplexFloat => "ComplexFloat" => ComplexDouble => "ComplexDouble" );
     /*
     Uint8,
     Int8,
