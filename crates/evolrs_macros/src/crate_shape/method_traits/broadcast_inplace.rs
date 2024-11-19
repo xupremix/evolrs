@@ -53,7 +53,7 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
             "\nThe dimension provided for broadcasting {shape_curr} into {shape_gen} are not compatible.\nTo Broadcast when iterating over the dimension sizes, starting at the trailing dimension, the dimension sizes must either be:\n - equal\n - one of them is 1\n - one of them does not exist\n"
         );
 
-        let assert_check = gen_assert_check(curr_dim, dims);
+        let assert_check = gen_assert_check(curr_dim, dims, true);
 
         toks.push(quote! {
             impl<
@@ -65,6 +65,9 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
                 const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
             }
         });
+
+        let assert_check = gen_assert_check(curr_dim, dims, false);
+
         if curr_dim != dims {
             toks.push(quote! {
                 impl<
@@ -73,7 +76,7 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
                         #shape_gen < #(#idents_g),* >,
                         #shape_gen < #(#idents_d),* >
                     > for #shape_curr < #(#idents),* > {
-                const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
+                    const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
                 }
             });
         }
@@ -84,7 +87,7 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
     }
 }
 
-fn gen_assert_check(mut curr_dim: i64, mut dims: i64) -> TokenStream {
+fn gen_assert_check(mut curr_dim: i64, mut dims: i64, use_idents: bool) -> TokenStream {
     // Reminder:
     // broadcast requirements:
     // When iterating over the dimension sizes, starting at the trailing dimension the dimension sizes must either be:
@@ -103,11 +106,19 @@ fn gen_assert_check(mut curr_dim: i64, mut dims: i64) -> TokenStream {
             continue;
         }
         let dim = Ident::new(&format!("D{}", curr_dim - 1), Span::call_site());
-        toks.push(quote! {
-            (#dim == #dim_g || #dim == 1 /* || #dim_g == 1 */ ) &&
-            (#dim_d >= #dim_g && #dim_d >= #dim) &&
-            (#dim_d == #dim_g || #dim_d == #dim) &&
-        });
+        if use_idents {
+            toks.push(quote! {
+                (#dim == #dim_g || #dim == 1 /* || #dim_g == 1 */ ) &&
+                (#dim_d >= #dim_g && #dim_d >= #dim) &&
+                (#dim_d == #dim_g || #dim_d == #dim) &&
+            });
+        } else {
+            toks.push(quote! {
+                (#dim == #dim_g /* || #dim == 1 */ || #dim_g == 1 ) &&
+                (#dim_d >= #dim_g && #dim_d >= #dim) &&
+                (#dim_d == #dim_g || #dim_d == #dim) &&
+            });
+        }
         curr_dim -= 1;
         dims -= 1;
     }
