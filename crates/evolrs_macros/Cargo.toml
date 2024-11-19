@@ -10,6 +10,7 @@ readme.workspace = true
 [features]
 nightly = []
 broadcast-semantics = []
+type-coercion = []
 half = ["dep:half"]
 
 [lib]
