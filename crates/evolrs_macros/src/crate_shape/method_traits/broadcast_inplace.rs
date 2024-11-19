@@ -53,33 +53,34 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
             "\nThe dimension provided for broadcasting {shape_curr} into {shape_gen} are not compatible.\nTo Broadcast when iterating over the dimension sizes, starting at the trailing dimension, the dimension sizes must either be:\n - equal\n - one of them is 1\n - one of them does not exist\n"
         );
 
+        // if curr_dim == dims {
         let assert_check = gen_assert_check(curr_dim, dims, true);
-
         toks.push(quote! {
             impl<
                 #const_dims
                 > crate::shapes::broadcast::BroadcastInplace<
-                    #shape_curr < #(#idents),* >,
-                    #shape_gen < #(#idents_d),* >
+                #shape_curr < #(#idents),* >,
+                #shape_gen < #(#idents_d),* >
                 > for #shape_gen < #(#idents_g),* > {
                 const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
             }
         });
+        // }
 
-        let assert_check = gen_assert_check(curr_dim, dims, false);
-
-        if curr_dim != dims {
-            toks.push(quote! {
-                impl<
-                    #const_dims
-                > crate::shapes::broadcast::BroadcastInplace<
-                        #shape_gen < #(#idents_g),* >,
-                        #shape_gen < #(#idents_d),* >
-                    > for #shape_curr < #(#idents),* > {
-                    const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
-                }
-            });
-        }
+        // let assert_check = gen_assert_check(curr_dim, dims, false);
+        //
+        // if curr_dim != dims {
+        //     toks.push(quote! {
+        //         impl<
+        //             #const_dims
+        //         > crate::shapes::broadcast::BroadcastInplace<
+        //             #shape_gen < #(#idents_g),* >,
+        //             #shape_gen < #(#idents_d),* >
+        //         > for #shape_curr < #(#idents),* > {
+        //             const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
+        //         }
+        //     });
+        // }
         curr_dim += 1;
     }
     quote! {
