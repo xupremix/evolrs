@@ -1,3 +1,5 @@
+pub mod type_coercion;
+
 use std::{fmt::Debug, hash::Hash};
 
 pub trait Kind: 'static + Debug + Clone + Copy + Send + Sync + PartialEq {
@@ -22,6 +24,7 @@ macro_rules! kind {
 
 kind!(u8 Uint8);
 kind!(i8 Int8);
+// NOTE: char is not implemented for operations (use i8 instead)
 kind!(char Int8);
 kind!(i16 Int16);
 kind!(i32 Int);

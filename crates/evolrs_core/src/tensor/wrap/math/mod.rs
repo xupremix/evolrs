@@ -3,7 +3,7 @@ use crate::kind::Kind;
 use crate::shapes::shape::Shape;
 use crate::tensor::Tensor;
 
-mod add_sub_mul_div;
+pub mod add_sub_mul_div;
 
 macro_rules! wrap {
     ($( [ $f1:ident - $f2:ident ] ),* $(,)?) => {

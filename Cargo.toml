@@ -21,12 +21,11 @@ license = "MIT or Apache-2.0"
 [features]
 default = ["broadcast-semantics"]
 
-all = ["nightly", "half", "broadcast-semantics", "type-coercion"]
-non-nightly = ["half", "broadcast-semantics", "type-coercion"]
+all = ["nightly", "half", "broadcast-semantics"]
+non-nightly = ["half", "broadcast-semantics"]
 
 nightly = ["evolrs_core/nightly"]
 broadcast-semantics = ["evolrs_core/broadcast-semantics"]
-type-coercion = ["evolrs_core/type-coercion"]
 half = ["evolrs_core/half"]
 
 [dependencies.evolrs_core]

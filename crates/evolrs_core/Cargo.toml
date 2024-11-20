@@ -11,7 +11,6 @@ readme.workspace = true
 nightly = ["evolrs_macros/nightly"]
 half = ["evolrs_macros/half", "dep:half"]
 broadcast-semantics = ["evolrs_macros/broadcast-semantics"]
-type-coercion = ["evolrs_macros/type-coercion"]
 
 [dependencies]
 evolrs_macros = { path = "../evolrs_macros/", version = "*" }
