@@ -26,16 +26,10 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
                 quote! { const #i: usize, }
             })
             .collect::<Vec<_>>();
-        let const_dims_d = (0..dims)
-            .map(|i| {
-                let i = Ident::new(&format!("D_D{}", i), Span::call_site());
-                quote! { const #i: usize, }
-            })
-            .collect::<Vec<_>>();
+
         let const_dims = quote! {
             #(#const_dims)*
             #(#const_dims_g)*
-            #(#const_dims_d)*
         };
 
         // Generation of idents
@@ -45,42 +39,21 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
         let idents_g = (0..dims)
             .map(|i| Ident::new(&format!("G_D{}", i), Span::call_site()))
             .collect::<Vec<_>>();
-        let idents_d = (0..dims)
-            .map(|i| Ident::new(&format!("D_D{}", i), Span::call_site()))
-            .collect::<Vec<_>>();
 
         let assert_msg = format!(
             "\nThe dimension provided for broadcasting {shape_curr} into {shape_gen} are not compatible.\nTo Broadcast when iterating over the dimension sizes, starting at the trailing dimension, the dimension sizes must either be:\n - equal\n - one of them is 1\n - one of them does not exist\n"
         );
 
-        // if curr_dim == dims {
-        let assert_check = gen_assert_check(curr_dim, dims, true);
+        let assert_check = gen_assert_check(curr_dim, dims);
         toks.push(quote! {
             impl<
                 #const_dims
-                > crate::shapes::broadcast::BroadcastInplace<
-                #shape_curr < #(#idents),* >,
-                #shape_gen < #(#idents_d),* >
-                > for #shape_gen < #(#idents_g),* > {
+            > crate::shapes::broadcast::BroadcastInplace<
+                #shape_gen < #(#idents_g),* >
+            > for #shape_curr < #(#idents),* > {
                 const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
             }
         });
-        // }
-
-        // let assert_check = gen_assert_check(curr_dim, dims, false);
-        //
-        // if curr_dim != dims {
-        //     toks.push(quote! {
-        //         impl<
-        //             #const_dims
-        //         > crate::shapes::broadcast::BroadcastInplace<
-        //             #shape_gen < #(#idents_g),* >,
-        //             #shape_gen < #(#idents_d),* >
-        //         > for #shape_curr < #(#idents),* > {
-        //             const BROADCAST_INPLACE_CHECK: () = assert!(#assert_check, #assert_msg);
-        //         }
-        //     });
-        // }
         curr_dim += 1;
     }
     quote! {
@@ -88,7 +61,7 @@ pub(crate) fn broadcast_inplace(dims: i64, name: &Ident) -> TokenStream {
     }
 }
 
-fn gen_assert_check(mut curr_dim: i64, mut dims: i64, use_idents: bool) -> TokenStream {
+fn gen_assert_check(mut curr_dim: i64, mut dims: i64) -> TokenStream {
     // Reminder:
     // broadcast requirements:
     // When iterating over the dimension sizes, starting at the trailing dimension the dimension sizes must either be:
@@ -96,30 +69,12 @@ fn gen_assert_check(mut curr_dim: i64, mut dims: i64, use_idents: bool) -> Token
     // - one of them is 1
     // - or one of them does not exist.
     let mut toks = vec![];
-    while dims > 0 {
+    while curr_dim > 0 {
         let dim_g = Ident::new(&format!("G_D{}", dims - 1), Span::call_site());
-        let dim_d = Ident::new(&format!("D_D{}", dims - 1), Span::call_site());
-        if curr_dim == 0 && dims > 0 {
-            toks.push(quote! {
-                #dim_d == #dim_g &&
-            });
-            dims -= 1;
-            continue;
-        }
         let dim = Ident::new(&format!("D{}", curr_dim - 1), Span::call_site());
-        if use_idents {
-            toks.push(quote! {
-                (#dim == #dim_g || #dim == 1 /* || #dim_g == 1 */ ) &&
-                (#dim_d >= #dim_g && #dim_d >= #dim) &&
-                (#dim_d == #dim_g || #dim_d == #dim) &&
-            });
-        } else {
-            toks.push(quote! {
-                (#dim == #dim_g /* || #dim == 1 */ || #dim_g == 1 ) &&
-                (#dim_d >= #dim_g && #dim_d >= #dim) &&
-                (#dim_d == #dim_g || #dim_d == #dim) &&
-            });
-        }
+        toks.push(quote! {
+            (#dim == #dim_g || #dim == 1) &&
+        });
         curr_dim -= 1;
         dims -= 1;
     }
