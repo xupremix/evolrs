@@ -6,4 +6,4 @@ readme.workspace = true
 license.workspace = true
 
 [dependencies]
-evolrs = { path = "../../", version = "*", features = ["half", "type-coercion"] }
+evolrs = { path = "../../", version = "*", features = ["all"] }

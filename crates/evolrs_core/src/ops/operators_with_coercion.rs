@@ -50,12 +50,23 @@ macro_rules! operator {
 
 macro_rules! def_op {
     ($modn:ident $trait:ident $method:ident $tch_method:ident) => {
+        // Bool + Bool = Bool
         operator!($trait $method $tch_method => bool => bool => bool);
 
+        /*
+        Int8 + Int8 = Int8
+        Int8 + Bool = Int8
+        Bool + Int8 = Int8
+        */
         operator!($trait $method $tch_method => i8 => i8 => i8);
         operator!($trait $method $tch_method => i8 => bool => i8);
         operator!($trait $method $tch_method => bool => i8 => i8);
 
+        /*
+        UInt8 + UInt8 = UInt8
+        UInt8 + Bool = UInt8
+        Bool + UInt8 = UInt8
+        */
         operator!($trait $method $tch_method => u8 => u8 => u8);
         operator!($trait $method $tch_method => u8 => bool => u8);
         operator!($trait $method $tch_method => bool => u8 => u8);
@@ -613,6 +624,9 @@ def_div! {
     i64 => c64 => c64,
     i64 => bool => f32,
 
+    f32 => u8 => f32,
+    f32 => i8 => f32,
+    f32 => i16 => f32,
     f32 => i32 => f32,
     f32 => i64 => f32,
     f32 => f32 => f32,
@@ -621,9 +635,6 @@ def_div! {
     f32 => c32 => c32,
     f32 => c64 => c64,
     f32 => bool => f32,
-    f32 => u8 => f32,
-    f32 => i8 => f32,
-    f32 => i16 => f32,
 
     f64 => i32 => f64,
     f64 => i64 => f64,
