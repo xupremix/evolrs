@@ -9,9 +9,9 @@ use crate::{
 };
 
 macro_rules! op {
-    ($( $coerce:ident $trait:ident $trait_:ident $fn:ident $tch_fn:ident $fn_:ident $tch_fn_:ident ),* $(,)?) => {
+    ($( $trait:ident $trait_:ident $fn:ident $tch_fn:ident $fn_:ident $tch_fn_:ident ),* $(,)?) => {
         $(
-            impl<S: Shape, D: Device, K: Kind, K2: $coerce<K>> std::ops::$trait<Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<Tensor<S, D, K2>>
                 for Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -22,7 +22,7 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: $coerce<K>> std::ops::$trait<&Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<&Tensor<S, D, K2>>
                 for Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -33,7 +33,7 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: $coerce<K>> std::ops::$trait<Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<Tensor<S, D, K2>>
                 for &Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -44,7 +44,7 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: $coerce<K>> std::ops::$trait<&Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<&Tensor<S, D, K2>>
                 for &Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -55,13 +55,19 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind> std::ops::$trait_<Tensor<S, D, K>> for Tensor<S, D, K> {
-                fn $fn_(&mut self, rhs: Tensor<S, D, K>) {
+            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait_<Tensor<S, D, K2>> for Tensor<S, D, K>
+            where
+                K: Same<K2::To>
+            {
+                fn $fn_(&mut self, rhs: Tensor<S, D, K2>) {
                     let _ = self.repr.$tch_fn_(&rhs.repr);
                 }
             }
-            impl<S: Shape, D: Device, K: Kind> std::ops::$trait_<&Tensor<S, D, K>> for Tensor<S, D, K> {
-                fn $fn_(&mut self, rhs: &Tensor<S, D, K>) {
+            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait_<&Tensor<S, D, K2>> for Tensor<S, D, K>
+            where
+                K: Same<K2::To>
+            {
+                fn $fn_(&mut self, rhs: &Tensor<S, D, K2>) {
                     let _ = self.repr.$tch_fn_(&rhs.repr);
                 }
             }
@@ -131,9 +137,9 @@ macro_rules! op {
 }
 
 op! {
-   Coerce Add AddAssign add g_add add_assign g_add_,
-   Coerce Sub SubAssign sub g_sub sub_assign g_sub_,
-   Coerce Mul MulAssign mul g_mul mul_assign g_mul_,
+   Add AddAssign add g_add add_assign g_add_,
+   Sub SubAssign sub g_sub sub_assign g_sub_,
+   Mul MulAssign mul g_mul mul_assign g_mul_,
 }
 op! {
     @div
