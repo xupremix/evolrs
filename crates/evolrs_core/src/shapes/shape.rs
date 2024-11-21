@@ -9,15 +9,15 @@ pub trait Shape: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq +
     fn dims() -> &'static [i64];
 }
 
-crate_shape!(pub 0);
-crate_shape!(pub 1);
-crate_shape!(pub 2);
-crate_shape!(pub 3);
-crate_shape!(pub 4);
-crate_shape!(pub 5);
-crate_shape!(pub 6);
-crate_shape!(pub 7);
-crate_shape!(pub 8);
+crate_shape!(0);
+crate_shape!(1);
+crate_shape!(2);
+crate_shape!(3);
+crate_shape!(4);
+crate_shape!(5);
+crate_shape!(6);
+crate_shape!(7);
+crate_shape!(8);
 
 #[cfg(test)]
 mod tests {}

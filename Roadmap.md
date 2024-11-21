@@ -10,6 +10,14 @@
 - Exact Dataset Iterators  
 - Model type definition macro for importing  
 
+# Behavior
+X Broadcasting
+X InplaceBroadcasting
+X TypeCoercion
+
+# Tensor Creation APIs
+Distribution generation
+
 # Tensor API implementations necessary before layer implementation
 X add
 X sub
@@ -41,3 +49,13 @@ multiply
 
 unsqueeze
 squeeze
+
+# Optimizers
+
+# Modules
+
+# Activation functions
+
+# Dataset macros
+
+# Model amcros

@@ -8,7 +8,6 @@ mod parse_args;
 
 pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let args = syn::parse_macro_input!(input as Args);
-    let vis = args.vis;
     let dims: i64 = args.dims.base10_parse().expect("expected integer literal");
 
     let name = if dims == 0 {
@@ -36,7 +35,7 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
     quote! {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-        #vis struct #name #const_generics;
+        pub struct #name #const_generics;
 
         impl #const_generics Shape for #name #generics {
             type Shape = #shape;
