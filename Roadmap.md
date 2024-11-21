@@ -11,10 +11,10 @@
 - Model type definition macro for importing  
 
 # Tensor API implementations necessary before layer implementation
-add
-sub
-div
-mul
+X add
+X sub
+X div
+X mul
 
 random
 

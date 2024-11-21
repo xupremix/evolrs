@@ -145,6 +145,26 @@ op! {
     @div
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::device::Cpu;
+
+    macro_rules! def_test {
+        ($( $name:ident => $($to:ty: {$($lhs:ty, $rhs:ty);* $(;)?}),* $(,)?);* $(;)?) => {
+            $(
+                #[test]
+                fn $name() {
+
+
+                }
+            )*
+        };
+        (@impl ) => {
+        };
+    }
+}
+
 //
 // #[cfg(test)]
 // mod tests {
