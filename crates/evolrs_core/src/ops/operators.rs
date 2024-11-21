@@ -149,98 +149,79 @@ op! {
 mod tests {
     use super::*;
     use crate::device::Cpu;
+    use crate::shapes::shape::Rank2;
 
     macro_rules! def_test {
-        ($( $name:ident => $($to:ty: {$($lhs:ty, $rhs:ty);* $(;)?}),* $(,)?);* $(;)?) => {
-            $(
-                #[test]
-                fn $name() {
+        ($name:ident => $op:tt => $expected:expr => $type:ty => $change:ty) => {
+            #[test]
+            fn $name() {
+                let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t3: Tensor<Rank2<2, 3>, Cpu, $change> = t1 $op t2;
+                assert_eq!(t3.to_tch().sum(None), $expected);
 
+                let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t3: Tensor<Rank2<2, 3>, Cpu, $change> = &t1 $op t2;
+                assert_eq!(t3.to_tch().sum(None), $expected);
 
-                }
-            )*
+                let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t3: Tensor<Rank2<2, 3>, Cpu, $change> = t1 $op &t2;
+                assert_eq!(t3.to_tch().sum(None), $expected);
+
+                let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
+                let t3: Tensor<Rank2<2, 3>, Cpu, $change> = &t1 $op &t2;
+                assert_eq!(t3.to_tch().sum(None), $expected);
+            }
         };
-        (@impl ) => {
+        (@assign $name:ident => $op:tt => $expected:expr) => {
+            #[test]
+            fn $name() {
+                let mut t1: Tensor<crate::shapes::shape::Rank2<2, 3>> = Tensor::ones();
+                let t2: Tensor<crate::shapes::shape::Rank2<2, 3>> = Tensor::ones();
+                t1 $op t2;
+                assert_eq!(t1.to_tch().sum(None), $expected);
+            }
         };
     }
-}
 
-//
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//
-//     macro_rules! def_test {
-//         ($name:ident => $op:tt => $expected:expr => $type:ty => $change:ty) => {
-//             #[test]
-//             fn $name() {
-//                 let t1: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t2: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t3: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $change> = t1 $op t2;
-//                 assert_eq!(t3.to_tch().sum(None), $expected);
-//
-//                 let t1: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t2: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t3: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $change> = &t1 $op t2;
-//                 assert_eq!(t3.to_tch().sum(None), $expected);
-//
-//                 let t1: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t2: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t3: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $change> = t1 $op &t2;
-//                 assert_eq!(t3.to_tch().sum(None), $expected);
-//
-//                 let t1: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t2: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $type> = Tensor::ones();
-//                 let t3: Tensor<crate::shapes::shape::Rank2<2, 3>, crate::device::Cpu, $change> = &t1 $op &t2;
-//                 assert_eq!(t3.to_tch().sum(None), $expected);
-//             }
-//         };
-//         (@assign $name:ident => $op:tt => $expected:expr) => {
-//             #[test]
-//             fn $name() {
-//                 let mut t1: Tensor<crate::shapes::shape::Rank2<2, 3>> = Tensor::ones();
-//                 let t2: Tensor<crate::shapes::shape::Rank2<2, 3>> = Tensor::ones();
-//                 t1 $op t2;
-//                 assert_eq!(t1.to_tch().sum(None), $expected);
-//             }
-//         };
-//     }
-//
-//     def_test!(test_add_i32 => + => tch::Tensor::from(12) => i32 => i32);
-//     def_test!(test_add_i64 => + => tch::Tensor::from(12) => i64 => i64);
-//     def_test!(test_add_f32 => + => tch::Tensor::from(12.0) => f32 => f32);
-//     def_test!(test_add_f64 => + => tch::Tensor::from(12.0) => f64 => f64);
-//
-//     def_test!(test_sub_i32 => - => tch::Tensor::from(0) => i32 => i32);
-//     def_test!(test_sub_i64 => - => tch::Tensor::from(0) => i64 => i64);
-//     def_test!(test_sub_f32 => - => tch::Tensor::from(0.0) => f32 => f32);
-//     def_test!(test_sub_f64 => - => tch::Tensor::from(0.0) => f64 => f64);
-//
-//     def_test!(test_mul_i32 => * => tch::Tensor::from(6) => i32 => i32);
-//     def_test!(test_mul_i64 => * => tch::Tensor::from(6) => i64 => i64);
-//     def_test!(test_mul_f32 => * => tch::Tensor::from(6.0) => f32 => f32);
-//     def_test!(test_mul_f64 => * => tch::Tensor::from(6.0) => f64 => f64);
-//
-//     def_test!(test_div_i32 => / => tch::Tensor::from(6.0) => i32 => f32);
-//     def_test!(test_div_i64 => / => tch::Tensor::from(6.0) => i64 => f64);
-//     def_test!(test_div_f32 => / => tch::Tensor::from(6.0) => f32 => f32);
-//     def_test!(test_div_f64 => / => tch::Tensor::from(6.0) => f64 => f64);
-//
-//     def_test!(@assign test_add_assign_i32 => += => tch::Tensor::from(12));
-//     def_test!(@assign test_add_assign_i64 => += => tch::Tensor::from(12));
-//     def_test!(@assign test_add_assign_f32 => += => tch::Tensor::from(12.0));
-//     def_test!(@assign test_add_assign_f64 => += => tch::Tensor::from(12.0));
-//
-//     def_test!(@assign test_sub_assign_i32 => -= => tch::Tensor::from(0));
-//     def_test!(@assign test_sub_assign_i64 => -= => tch::Tensor::from(0));
-//     def_test!(@assign test_sub_assign_f32 => -= => tch::Tensor::from(0.0));
-//     def_test!(@assign test_sub_assign_f64 => -= => tch::Tensor::from(0.0));
-//
-//     def_test!(@assign test_mul_assign_i32 => *= => tch::Tensor::from(6));
-//     def_test!(@assign test_mul_assign_i64 => *= => tch::Tensor::from(6));
-//     def_test!(@assign test_mul_assign_f32 => *= => tch::Tensor::from(6.0));
-//     def_test!(@assign test_mul_assign_f64 => *= => tch::Tensor::from(6.0));
-//
-//     def_test!(@assign test_div_assign_f32 => /= => tch::Tensor::from(6.0));
-//     def_test!(@assign test_div_assign_f64 => /= => tch::Tensor::from(6.0));
-// }
+    def_test!(test_add_i32 => + => tch::Tensor::from(12) => i32 => i32);
+    def_test!(test_add_i64 => + => tch::Tensor::from(12) => i64 => i64);
+    def_test!(test_add_f32 => + => tch::Tensor::from(12.0) => f32 => f32);
+    def_test!(test_add_f64 => + => tch::Tensor::from(12.0) => f64 => f64);
+
+    def_test!(test_sub_i32 => - => tch::Tensor::from(0) => i32 => i32);
+    def_test!(test_sub_i64 => - => tch::Tensor::from(0) => i64 => i64);
+    def_test!(test_sub_f32 => - => tch::Tensor::from(0.0) => f32 => f32);
+    def_test!(test_sub_f64 => - => tch::Tensor::from(0.0) => f64 => f64);
+
+    def_test!(test_mul_i32 => * => tch::Tensor::from(6) => i32 => i32);
+    def_test!(test_mul_i64 => * => tch::Tensor::from(6) => i64 => i64);
+    def_test!(test_mul_f32 => * => tch::Tensor::from(6.0) => f32 => f32);
+    def_test!(test_mul_f64 => * => tch::Tensor::from(6.0) => f64 => f64);
+
+    def_test!(test_div_i32 => / => tch::Tensor::from(6.0) => i32 => f32);
+    def_test!(test_div_i64 => / => tch::Tensor::from(6.0) => i64 => f32);
+    def_test!(test_div_f32 => / => tch::Tensor::from(6.0) => f32 => f32);
+    def_test!(test_div_f64 => / => tch::Tensor::from(6.0) => f64 => f64);
+
+    def_test!(@assign test_add_assign_i32 => += => tch::Tensor::from(12));
+    def_test!(@assign test_add_assign_i64 => += => tch::Tensor::from(12));
+    def_test!(@assign test_add_assign_f32 => += => tch::Tensor::from(12.0));
+    def_test!(@assign test_add_assign_f64 => += => tch::Tensor::from(12.0));
+
+    def_test!(@assign test_sub_assign_i32 => -= => tch::Tensor::from(0));
+    def_test!(@assign test_sub_assign_i64 => -= => tch::Tensor::from(0));
+    def_test!(@assign test_sub_assign_f32 => -= => tch::Tensor::from(0.0));
+    def_test!(@assign test_sub_assign_f64 => -= => tch::Tensor::from(0.0));
+
+    def_test!(@assign test_mul_assign_i32 => *= => tch::Tensor::from(6));
+    def_test!(@assign test_mul_assign_i64 => *= => tch::Tensor::from(6));
+    def_test!(@assign test_mul_assign_f32 => *= => tch::Tensor::from(6.0));
+    def_test!(@assign test_mul_assign_f64 => *= => tch::Tensor::from(6.0));
+
+    def_test!(@assign test_div_assign_f32 => /= => tch::Tensor::from(6.0));
+    def_test!(@assign test_div_assign_f64 => /= => tch::Tensor::from(6.0));
+}
