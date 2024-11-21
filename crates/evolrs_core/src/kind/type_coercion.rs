@@ -3,6 +3,9 @@ use super::f16;
 
 use super::{c16, c32, c64, Kind};
 
+pub trait Same<T> {}
+impl<T> Same<T> for T {}
+
 pub trait Coerce<Base: Kind>: Kind {
     type To: Kind;
 }
@@ -216,7 +219,7 @@ def_coercion! {
 
 def_coercion! {
     @div
-        f32: {
+    f32: {
         bool, u8;
         bool, i8;
         bool, i16;

@@ -1,7 +1,7 @@
 use crate::{
     device::Device,
     kind::{
-        type_coercion::{Coerce, DivCoerce},
+        type_coercion::{Coerce, DivCoerce, Same},
         Kind,
     },
     shapes::shape::Shape,
@@ -67,13 +67,76 @@ macro_rules! op {
             }
         )*
     };
+    (@div) => {
+        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<Tensor<S, D, K2>>
+            for Tensor<S, D, K>
+        {
+            type Output = Tensor<S, D, K2::To>;
+            fn div(self, rhs: Tensor<S, D, K2>) -> Self::Output {
+                Tensor {
+                    repr: self.repr.g_div(&rhs.repr),
+                    ..Default::default()
+                }
+            }
+        }
+        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<&Tensor<S, D, K2>>
+            for Tensor<S, D, K>
+        {
+            type Output = Tensor<S, D, K2::To>;
+            fn div(self, rhs: &Tensor<S, D, K2>) -> Self::Output {
+                Tensor {
+                    repr: self.repr.g_div(&rhs.repr),
+                    ..Default::default()
+                }
+            }
+        }
+        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<Tensor<S, D, K2>>
+            for &Tensor<S, D, K>
+        {
+            type Output = Tensor<S, D, K2::To>;
+            fn div(self, rhs: Tensor<S, D, K2>) -> Self::Output {
+                Tensor {
+                    repr: self.repr.g_div(&rhs.repr),
+                    ..Default::default()
+                }
+            }
+        }
+        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<&Tensor<S, D, K2>>
+            for &Tensor<S, D, K>
+        {
+            type Output = Tensor<S, D, K2::To>;
+            fn div(self, rhs: &Tensor<S, D, K2>) -> Self::Output {
+                Tensor {
+                    repr: self.repr.g_div(&rhs.repr),
+                    ..Default::default()
+                }
+            }
+        }
+        impl<
+            S: Shape,
+            D: Device,
+            K: Kind,
+            K2: DivCoerce<K>
+        > std::ops::DivAssign<
+            Tensor<S, D, K2>
+        > for Tensor<S, D, K>
+        where
+            K: Same<K2::To>
+        {
+            fn div_assign(&mut self, rhs: Tensor<S, D, K2>) {
+                let _ = self.repr.g_div_(&rhs.repr);
+            }
+        }
+    };
 }
 
 op! {
    Coerce Add AddAssign add g_add add_assign g_add_,
    Coerce Sub SubAssign sub g_sub sub_assign g_sub_,
    Coerce Mul MulAssign mul g_mul mul_assign g_mul_,
-   DivCoerce Div DivAssign div g_div div_assign g_div_,
+}
+op! {
+    @div
 }
 
 //
