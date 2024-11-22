@@ -3,7 +3,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Ident;
 
-mod method_traits;
+mod methods;
 mod parse_args;
 
 pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -31,7 +31,7 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         gen_shape(dims - 1, 0)
     };
 
-    let method_traits = method_traits::gen_methods(dims, &name, &dim_idents);
+    let method_traits = methods::methods(dims, &name, &dim_idents);
 
     quote! {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

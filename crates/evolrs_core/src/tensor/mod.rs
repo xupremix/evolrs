@@ -18,12 +18,16 @@ pub struct Tensor<S: Shape, D: Device = Cpu, K: Kind = f32> {
 }
 
 impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
-    pub fn dims(&self) -> i64 {
+    pub const fn dims(&self) -> i64 {
         S::DIMS
     }
 
-    pub fn nelems(&self) -> usize {
+    pub const fn nelems(&self) -> usize {
         S::NELEMS
+    }
+
+    pub fn shape(&self) -> &[i64] {
+        S::dims()
     }
 
     pub fn to_tch(&self) -> &tch::Tensor {
@@ -32,6 +36,10 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
 
     pub fn to_tch_mut(&mut self) -> &mut tch::Tensor {
         &mut self.repr
+    }
+
+    pub fn print(&self) {
+        self.repr.print();
     }
 }
 
@@ -42,16 +50,6 @@ impl<S: Shape, D: Device, K: Kind> Default for Tensor<S, D, K> {
             shape: PhantomData,
             device: PhantomData,
             dtype: PhantomData,
-        }
-    }
-}
-
-// TODO: check that it actually works as intended as there is no .clone impl
-impl<S: Shape, D: Device, K: Kind> Clone for Tensor<S, D, K> {
-    fn clone(&self) -> Self {
-        Self {
-            repr: self.repr.copy(),
-            ..Default::default()
         }
     }
 }

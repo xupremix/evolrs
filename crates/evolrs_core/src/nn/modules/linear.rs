@@ -6,9 +6,8 @@ use crate::{
     device::{Cpu, Device},
     kind::Kind,
     nn::Module,
-    ops::method_traits::matmul::Matmul,
     shapes::shape::{Rank2, Shape},
-    tensor::Tensor,
+    tensor::{wrap::matmul::Matmul, Tensor},
 };
 
 #[derive(Debug)]

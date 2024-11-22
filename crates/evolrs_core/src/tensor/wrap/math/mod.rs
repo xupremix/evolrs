@@ -4,6 +4,7 @@ use crate::shapes::shape::Shape;
 use crate::tensor::Tensor;
 
 pub mod add_sub_mul_div;
+pub mod bitwise;
 
 macro_rules! wrap {
     ($( [ $f1:ident - $f2:ident ] ),* $(,)?) => {

@@ -1,9 +1,8 @@
 use crate::{
     device::{Cpu, Device},
     kind::Kind,
-    ops::method_traits::matmul::Matmul,
     shapes::shape::{Rank2, Shape},
-    tensor::Tensor,
+    tensor::{wrap::matmul::Matmul, Tensor},
 };
 
 pub mod modules;

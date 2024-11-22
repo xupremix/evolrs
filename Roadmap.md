@@ -24,10 +24,8 @@ X sub
 X div
 X mul
 
-random
-
-argmax
-argmin
+X argmax
+X argmin
 
 backward
 

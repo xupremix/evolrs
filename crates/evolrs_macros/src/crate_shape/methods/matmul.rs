@@ -21,7 +21,7 @@ pub(crate) fn matmul(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStre
         impl<
             #(#const_dims)*
             #const_last_of_first
-        > crate::ops::method_traits::matmul::Matmul<
+        > crate::tensor::wrap::matmul::Matmul<
             #name < #(#dim_idents,)* >
         > for #name <
             #(#all_but_last_two,)*

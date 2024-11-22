@@ -1,8 +1,44 @@
 // TODO: remove the operations from bool tensors
 // TODO: check for operations when S = Scalar
 
+- done
+// - add
+// - argmax
+// - argmin
+// - item (implemented as int64_value / double_value)
+
+// Sampling distributions
+// - bernoulli
+// - uniform
+// - cauchy
+// - geometric
+// - log_normal_
+// - normal_
+// - random_
+
+// Rust traits in ops
+// - bitwise_not
+// - bitwise_anderfinv
+// - bitwise_or
+// - bitwise_xor
+// - bitwise_left_shift
+// - bitwise_right_shift
+// - clone? (check impl in mod.rs)
+// - copy (check impl) X
+// - eq X
+// - equal X
+// - ge
+// - gt
+// - le
+// - lt
+// - logical_and
+// - logical_not
+// - logical_or
+// - logical_xor
+// - ne X
+// - not_equal X
+
 // different:
-// - add X
 // - addbmm
 // - addcdiv
 // - addcmul
@@ -15,8 +51,6 @@
 // - amin
 // - angle
 // - apply
-// - argmax X
-// - argmin X
 // - argsort
 // - argwhere
 // - as_strided
@@ -24,18 +58,10 @@
 // - any
 // - backward
 // - baddmm
-// - bernoulli
 // - bincount
-// - bitwise_not
-// - bitwise_anderfinv
-// - bitwise_or
-// - bitwise_xor
-// - bitwise_left_shift
-// - bitwise_right_shift
 // - bmm
 // - .type (equivalent to .to_dtype...)
 // - broadcast_to (equal to .expand)
-// - cauchy
 // - ceil
 // - cholesky
 // - cholesky_inverse
@@ -44,8 +70,6 @@
 // - tensor_split (correlated with chunk)
 // - clamp
 // - clip
-// - clone? (check impl in mod.rs)
-// - copy (check impl) X
 // - conj (_physical / resolve_conj / resolve_neg)
 // - copysign
 // - corrcoef
@@ -68,15 +92,12 @@
 // - fmax / fmin
 // - diff
 // - digamma
-// - dim (S::DIMS) X
 // - dim_order
 // - dist
 // - div X
 // - dot X
 // - dsplit
 // - element_size
-// - eq X
-// - equal X
 // - expand
 // - expand_as (by conventions it should be renamed to expand_like)
 // - exponential_
@@ -89,11 +110,8 @@
 // - frexp
 // - gather
 // - gcd
-// - ge
-// - geometric_
 // - geqrf
 // - ger (same as outer)
-// - gt
 // - heaviside
 // - histc
 // - histogram
@@ -128,23 +146,15 @@
 // - is_sparse
 // - istft
 // - is_real
-// - item (implemented as int64_value / double_value) X
 // - kthvalue
 // - lcm
 // - ldexp
-// - le
 // - lerp
 // - logdet
-// - log_normal_
 // - logaddexp
 // - logaddexp2
 // - logsumexp
-// - logical_and
-// - logical_not
-// - logical_or
-// - logical_xor
 // - logit
-// - lt
 // - lu_factor
 // - lu_solve
 // - map
@@ -168,8 +178,6 @@
 // - movedim
 // - moveaxis
 // - msort
-// - mul
-// - multiply
 // - multinomial
 // - mv
 // - mvlgamma (same as multigammaln)
@@ -177,9 +185,7 @@
 // - nansum
 // - narrow_copy
 // - nan_to_num
-// - ne X
-// - not_equal X
-// - numel (S::NUMEL) X
+// - numel ? Should ne nelem
 // - nextafter
 // - nonzero
 // - norm (Deprecated, use vector_norm / matrix_norm / linalg.norm)
@@ -204,7 +210,6 @@
 // - q_per_channel_zero_points
 // - q_per_channel_axis
 // - rad2deg
-// - random (should be alrady impl) X
 // - ravel (same as flatten)
 // - record_stream
 // - register_hook
@@ -241,7 +246,6 @@
 // - stft
 // (storage stuff)
 // - stride
-// - sub X
 // - sum
 // - sum_to_size
 // - svd
@@ -271,7 +275,6 @@
 // - unbind
 // - unflatten
 // - unfold
-// - uniform
 // - unique
 // - unique_consecutive
 // - unsqueeze

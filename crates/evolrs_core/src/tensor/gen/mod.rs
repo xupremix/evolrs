@@ -20,6 +20,20 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
         Default::default()
     }
 
+    pub fn empty() -> Self {
+        Self {
+            repr: tch::Tensor::empty(S::dims(), (K::into_dtype(), D::into_device())),
+            ..Default::default()
+        }
+    }
+
+    pub fn empty_like(&self) -> Self {
+        Self {
+            repr: tch::Tensor::empty_like(&self.repr),
+            ..Default::default()
+        }
+    }
+
     pub fn zeros() -> Self {
         Self {
             repr: tch::Tensor::zeros(S::dims(), (K::into_dtype(), D::into_device())),

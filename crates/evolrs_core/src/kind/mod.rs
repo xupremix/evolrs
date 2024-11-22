@@ -1,3 +1,4 @@
+pub mod restriction;
 pub mod type_coercion;
 
 use std::{fmt::Debug, hash::Hash};
@@ -24,8 +25,6 @@ macro_rules! kind {
 
 kind!(u8 Uint8);
 kind!(i8 Int8);
-// NOTE: char is not implemented for operations (use i8 instead)
-kind!(char Int8);
 kind!(i16 Int16);
 kind!(i32 Int);
 kind!(i64 Int64);
@@ -47,60 +46,6 @@ kind!(def qu8 QUInt8);
 kind!(def qi32 QInt32);
 kind!(def bf16 BFloat16);
 
-pub mod restriction {
-    use super::*;
-
-    pub trait Int: Kind {}
-    pub trait Float: Kind {}
-    pub trait Complex: Kind {}
-    pub trait Quant: Kind {}
-    pub trait Bool: Kind {}
-
-    macro_rules! impl_trait_for_kind {
-        ($($n:ident: $($t:ty),*;)*) => {
-            $(
-            $(
-            impl $n for $t {}
-            )*
-            )*
-        };
-    }
-
-    impl_trait_for_kind! {
-        Int: u8, i8, char, i16, i32, i64;
-        Float: f32, f64;
-        Complex: c16, c32, c64;
-        Quant: qi8, qu8, qi32, bf16;
-        Bool: bool;
-    }
-
-    #[cfg(feature = "half")]
-    impl Float for f16 {}
-
-    pub mod composite {
-        use super::*;
-
-        macro_rules! def_composite {
-            ($name:ident $($t:ty),+) => {
-                pub trait $name: Kind {}
-                $(
-                   impl $name for $t {}
-                )+
-            };
-        }
-
-        #[cfg(feature = "half")]
-        def_composite!(IntOrFloat i8, char, i16, i32, i64, u8, f16, f32, f64);
-        #[cfg(not(feature = "half"))]
-        def_composite!(IntOrFloat i8, char, i16, i32, i64, u8, f32, f64);
-
-        #[cfg(feature = "half")]
-        def_composite!(FloatOrComplex f16, f32, f64, c16, c32, c64);
-        #[cfg(not(feature = "half"))]
-        def_composite!(FloatOrComplex f32, f64, c16, c32, c64);
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -115,7 +60,6 @@ mod tests {
     }
 
     def_test!(testi8 i8 Int8);
-    def_test!(testchar char Int8);
     def_test!(testi16 i16 Int16);
     def_test!(testi32 i32 Int);
     def_test!(testi64 i64 Int64);
