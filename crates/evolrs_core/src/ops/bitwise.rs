@@ -116,13 +116,14 @@ impl<S: Shape, D: Device, K: NotBool> std::ops::Neg for &Tensor<S, D, K> {
 // TODO: Scalar operators + Broadcasting impls
 // - bitwise_left_shift
 // - bitwise_right_shift
-// - logical_and
-// - logical_not
-// - logical_or
-// - logical_xor
 
 op! {
    BitAnd BitAndAssign bitand bitwise_and_tensor bitand_assign bitwise_and_tensor_,
    BitOr BitOrAssign bitor bitwise_or_tensor bitor_assign bitwise_or_tensor_,
    BitXor BitXorAssign bitxor bitwise_xor_tensor bitxor_assign bitwise_xor_tensor_,
+   Shl ShlAssign shl bitwise_left_shift shl_assign bitwise_left_shift_,
+   Shr ShrAssign shr bitwise_right_shift shr_assign bitwise_right_shift_,
 }
+
+#[cfg(test)]
+mod tests {}
