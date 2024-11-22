@@ -13,13 +13,15 @@ use evolrs::{device::Cpu, kind::c32, shapes::shape::Rank2, tch, tensor::Tensor};
 // - logical_xor
 
 fn main() {
-    let a: Tensor<Rank2<2, 3>, Cpu, i64> = Tensor::ones();
-    let b: Tensor<Rank2<2, 3>, _, bool> = Tensor::ones();
-    let ris = b << a;
-    ris.print();
+    // let a: Tensor<Rank2<2, 3>, Cpu, i32> = Tensor::ones();
+    // let b = a + 2;
+    let a: Tensor<Rank2<2, 3>, Cpu, i32> = Tensor::ones();
+    let b = 2i64 + a;
+    b.print();
 
-    let a = tch::Tensor::ones([2, 3], tch::kind::INT64_CPU);
-    let b = tch::Tensor::ones([2, 3], (tch::Kind::Bool, tch::Device::Cpu));
-    let ris = a.bitwise_left_shift(&b);
-    ris.print();
+    // let a = tch::Tensor::ones([2, 3], (tch::Kind::Int, tch::Device::Cpu));
+    // let b = a + 2;
+    let a = tch::Tensor::ones([2, 3], (tch::Kind::Int, tch::Device::Cpu));
+    let b: tch::Tensor = 1099511600000000000i64 + a;
+    b.print();
 }

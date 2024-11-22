@@ -1,4 +1,5 @@
 pub mod restriction;
+pub mod scalar;
 pub mod type_coercion;
 
 use std::{fmt::Debug, hash::Hash};
