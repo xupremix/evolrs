@@ -27,7 +27,7 @@ macro_rules! impl_into_scalar {
     };
 }
 
-impl_into_scalar!(@i64 u8, i8, i16, i32, i64);
+impl_into_scalar!(@i64 bool, u8, i8, i16, i32, i64);
 impl_into_scalar!(@f64 f32, f64);
 
 #[cfg(feature = "half")]
