@@ -94,3 +94,9 @@ op! {
 op! {
     @inv u8 i8 i16 i32 i64 f32 f64
 }
+#[cfg(feature = "half")]
+use crate::kind::f16;
+#[cfg(feature = "half")]
+op! {
+    @inv f16
+}

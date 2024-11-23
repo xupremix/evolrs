@@ -1,6 +1,7 @@
 use crate::{
     device::Device,
     kind::{
+        restriction::composite::{IntOrBool, NotBool},
         type_coercion::{Coerce, DivCoerce, Same},
         Kind,
     },
@@ -9,9 +10,9 @@ use crate::{
 };
 
 macro_rules! op {
-    ($( $trait:ident $trait_:ident $fn:ident $tch_fn:ident $fn_:ident $tch_fn_:ident ),* $(,)?) => {
+    ($( $kind:ident $coerce:ident $trait:ident $trait_:ident $fn:ident $tch_fn:ident $fn_:ident $tch_fn_:ident $($restr:ident)? ),* $(,)?) => {
         $(
-            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: $kind, K2: $coerce<K> $(+ $restr)?> std::ops::$trait<Tensor<S, D, K2>>
                 for Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -22,7 +23,7 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<&Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: $kind, K2: $coerce<K> $(+ $restr)?> std::ops::$trait<&Tensor<S, D, K2>>
                 for Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -33,7 +34,7 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: $kind, K2: $coerce<K> $(+ $restr)?> std::ops::$trait<Tensor<S, D, K2>>
                 for &Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -44,7 +45,7 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait<&Tensor<S, D, K2>>
+            impl<S: Shape, D: Device, K: $kind, K2: $coerce<K> $(+ $restr)?> std::ops::$trait<&Tensor<S, D, K2>>
                 for &Tensor<S, D, K>
             {
                 type Output = Tensor<S, D, K2::To>;
@@ -55,7 +56,7 @@ macro_rules! op {
                     }
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait_<Tensor<S, D, K2>> for Tensor<S, D, K>
+            impl<S: Shape, D: Device, K: $kind, K2: $coerce<K> $(+ $restr)?> std::ops::$trait_<Tensor<S, D, K2>> for Tensor<S, D, K>
             where
                 K: Same<K2::To>
             {
@@ -63,7 +64,7 @@ macro_rules! op {
                     let _ = self.repr.$tch_fn_(&rhs.repr);
                 }
             }
-            impl<S: Shape, D: Device, K: Kind, K2: Coerce<K>> std::ops::$trait_<&Tensor<S, D, K2>> for Tensor<S, D, K>
+            impl<S: Shape, D: Device, K: $kind, K2: $coerce<K> $(+ $restr)?> std::ops::$trait_<&Tensor<S, D, K2>> for Tensor<S, D, K>
             where
                 K: Same<K2::To>
             {
@@ -73,78 +74,76 @@ macro_rules! op {
             }
         )*
     };
-    (@div) => {
-        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<Tensor<S, D, K2>>
-            for Tensor<S, D, K>
-        {
-            type Output = Tensor<S, D, K2::To>;
-            fn div(self, rhs: Tensor<S, D, K2>) -> Self::Output {
-                Tensor {
-                    repr: self.repr.g_div(&rhs.repr),
-                    ..Default::default()
-                }
-            }
-        }
-        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<&Tensor<S, D, K2>>
-            for Tensor<S, D, K>
-        {
-            type Output = Tensor<S, D, K2::To>;
-            fn div(self, rhs: &Tensor<S, D, K2>) -> Self::Output {
-                Tensor {
-                    repr: self.repr.g_div(&rhs.repr),
-                    ..Default::default()
-                }
-            }
-        }
-        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<Tensor<S, D, K2>>
-            for &Tensor<S, D, K>
-        {
-            type Output = Tensor<S, D, K2::To>;
-            fn div(self, rhs: Tensor<S, D, K2>) -> Self::Output {
-                Tensor {
-                    repr: self.repr.g_div(&rhs.repr),
-                    ..Default::default()
-                }
-            }
-        }
-        impl<S: Shape, D: Device, K: Kind, K2: DivCoerce<K>> std::ops::Div<&Tensor<S, D, K2>>
-            for &Tensor<S, D, K>
-        {
-            type Output = Tensor<S, D, K2::To>;
-            fn div(self, rhs: &Tensor<S, D, K2>) -> Self::Output {
-                Tensor {
-                    repr: self.repr.g_div(&rhs.repr),
-                    ..Default::default()
-                }
-            }
-        }
-        impl<
-            S: Shape,
-            D: Device,
-            K: Kind,
-            K2: DivCoerce<K>
-        > std::ops::DivAssign<
-            Tensor<S, D, K2>
-        > for Tensor<S, D, K>
-        where
-            K: Same<K2::To>
-        {
-            fn div_assign(&mut self, rhs: Tensor<S, D, K2>) {
-                let _ = self.repr.g_div_(&rhs.repr);
-            }
-        }
-    };
 }
 
 op! {
-   Add AddAssign add g_add add_assign g_add_,
-   Sub SubAssign sub g_sub sub_assign g_sub_,
-   Mul MulAssign mul g_mul mul_assign g_mul_,
-}
-op! {
-    @div
+   Kind Coerce Add AddAssign add g_add add_assign g_add_,
+   Kind Coerce Sub SubAssign sub g_sub sub_assign g_sub_,
+   Kind Coerce Mul MulAssign mul g_mul mul_assign g_mul_,
+   Kind DivCoerce Div DivAssign div g_div div_assign g_div_,
+   IntOrBool Coerce BitAnd BitAndAssign bitand bitwise_and_tensor bitand_assign bitwise_and_tensor_ IntOrBool,
+   IntOrBool Coerce BitOr BitOrAssign bitor bitwise_or_tensor bitor_assign bitwise_or_tensor_ IntOrBool,
+   IntOrBool Coerce BitXor BitXorAssign bitxor bitwise_xor_tensor bitxor_assign bitwise_xor_tensor_ IntOrBool,
+   IntOrBool Coerce Shl ShlAssign shl bitwise_left_shift shl_assign bitwise_left_shift_ IntOrBool,
+   IntOrBool Coerce Shr ShrAssign shr bitwise_right_shift shr_assign bitwise_right_shift_ IntOrBool,
 }
 
+impl<S: Shape, D: Device, K: IntOrBool> std::ops::Not for Tensor<S, D, K> {
+    type Output = Self;
+    fn not(self) -> Self::Output {
+        Tensor {
+            repr: self.repr.bitwise_not(),
+            ..Default::default()
+        }
+    }
+}
+
+impl<S: Shape, D: Device, K: IntOrBool> std::ops::Not for &Tensor<S, D, K> {
+    type Output = Tensor<S, D, K>;
+    fn not(self) -> Self::Output {
+        Tensor {
+            repr: self.repr.bitwise_not(),
+            ..Default::default()
+        }
+    }
+}
+
+impl<S: Shape, D: Device, K: NotBool> std::ops::Neg for Tensor<S, D, K> {
+    type Output = Tensor<S, D, K>;
+    fn neg(self) -> Self::Output {
+        Tensor {
+            repr: -self.repr,
+            ..Default::default()
+        }
+    }
+}
+
+impl<S: Shape, D: Device, K: NotBool> std::ops::Neg for &Tensor<S, D, K> {
+    type Output = Tensor<S, D, K>;
+    fn neg(self) -> Self::Output {
+        Tensor {
+            repr: -&self.repr,
+            ..Default::default()
+        }
+    }
+}
+
+impl<S: Shape, D: Device, K: Kind> Clone for Tensor<S, D, K> {
+    fn clone(&self) -> Self {
+        Self {
+            repr: self.repr.copy(),
+            ..Default::default()
+        }
+    }
+}
+
+impl<S: Shape, D: Device, K: Kind, K2: Kind> PartialEq<Tensor<S, D, K2>> for Tensor<S, D, K> {
+    fn eq(&self, other: &Tensor<S, D, K2>) -> bool {
+        self.repr == other.repr
+    }
+}
+
+// TODO: add tests for new impls
 #[cfg(test)]
 mod tests {
     use super::*;
