@@ -29,9 +29,7 @@ X argmin
 
 backward
 
-copy
 detach
-dim
 numel
 
 eq

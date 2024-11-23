@@ -7,6 +7,7 @@ use crate::{
 
 pub mod modules;
 pub mod optim;
+pub mod vs;
 
 pub trait Module<const I: usize, const O: usize, D: Device = Cpu, K: Kind = f32> {
     fn forward<S: Shape>(
