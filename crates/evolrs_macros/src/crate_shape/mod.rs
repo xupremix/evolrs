@@ -4,6 +4,7 @@ use quote::quote;
 use syn::Ident;
 
 mod methods;
+mod nn;
 mod parse_args;
 
 pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -31,7 +32,8 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         gen_shape(dims - 1, 0)
     };
 
-    let method_traits = methods::methods(dims, &name, &dim_idents);
+    let methods = methods::methods(dims, &name, &dim_idents);
+    let nn = nn::methods(dims, &name, &dim_idents);
 
     quote! {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -46,7 +48,8 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
             }
         }
 
-        #method_traits
+        #methods
+        #nn
     }
     .into()
 }

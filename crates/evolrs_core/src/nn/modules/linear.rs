@@ -4,37 +4,27 @@ use tch::nn::{LinearConfig, Module as _};
 
 use crate::{
     device::{Cpu, Device},
-    kind::Kind,
-    nn::Module,
-    shapes::shape::{Rank2, Shape},
-    tensor::{wrap::matmul::Matmul, Tensor},
+    nn::{Forward, Module},
+    tensor::Tensor,
 };
 
 #[derive(Debug)]
-pub struct Linear<const I: usize, const O: usize, D: Device = Cpu, K: Kind = f32> {
+pub struct Linear<const I: usize, const O: usize, D: Device = Cpu> {
     repr: tch::nn::Linear,
     device: PhantomData<D>,
-    kind: PhantomData<K>,
 }
 
-impl<const I: usize, const O: usize, D: Device, K: Kind> Linear<I, O, D, K> {
+impl<const I: usize, const O: usize, D: Device> Linear<I, O, D> {
     pub fn new<'a, V: Borrow<tch::nn::Path<'a>>>(vs: V, config: LinearConfig) -> Self {
         Self {
             repr: tch::nn::linear(vs, I as i64, O as i64, config),
             device: PhantomData,
-            kind: PhantomData,
         }
     }
 }
 
-impl<const I: usize, const O: usize, D: Device, K: Kind> Module<I, O, D, K> for Linear<I, O, D, K> {
-    fn forward<S: Shape>(
-        &self,
-        xs: Tensor<S, D, K>,
-    ) -> Tensor<<Rank2<I, O> as Matmul<S>>::MatmulShape, D, K>
-    where
-        Rank2<I, O>: Matmul<S>,
-    {
+impl<const I: usize, const O: usize, D: Device> Module<I, O, D> for Linear<I, O, D> {
+    fn forward<S: Forward<I, O>>(&self, xs: &Tensor<S, D, f32>) -> Tensor<S::ForwardShape, D, f32> {
         Tensor {
             repr: self.repr.forward(&xs.repr),
             ..Default::default()
@@ -42,6 +32,5 @@ impl<const I: usize, const O: usize, D: Device, K: Kind> Module<I, O, D, K> for 
     }
 }
 
-// TODO: Add tests after checkign the implementation of module and vs
 #[cfg(test)]
 mod tests {}

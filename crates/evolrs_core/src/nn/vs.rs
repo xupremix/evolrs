@@ -21,3 +21,6 @@ impl<D: Device> Default for Vs<D> {
         Self::new()
     }
 }
+
+#[cfg(test)]
+mod tests {}
