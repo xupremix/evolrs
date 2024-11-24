@@ -7,6 +7,7 @@ pub mod matmul;
 pub mod ops;
 pub mod scalar_ops;
 pub mod squeeze;
+pub mod unsqueeze;
 
 // Rust traits in ops
 // - ge
