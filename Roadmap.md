@@ -27,10 +27,10 @@ X mul
 X argmax
 X argmin
 
-backward
+unsqueeze
+squeeze
 
-detach
-numel
+backward
 
 eq
 ne
@@ -43,8 +43,6 @@ dot
 mm
 multiply
 
-unsqueeze
-squeeze
 
 # Optimizers
 
