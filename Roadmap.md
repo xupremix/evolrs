@@ -23,21 +23,17 @@ X add
 X sub
 X div
 X mul
-
 X argmax
 X argmin
-
-unsqueeze
-squeeze
+X item
+X unsqueeze
+X squeeze
+X eq
+X ne
+X equal
+X not_equal
 
 backward
-
-eq
-ne
-equal
-not_equal
-
-item
 
 dot
 mm
