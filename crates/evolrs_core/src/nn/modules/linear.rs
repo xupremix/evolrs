@@ -90,5 +90,22 @@ where
     }
 }
 
+impl<S, D, M0, M1, M2> Module<Tensor<S, D, f32>> for (M0, M1, M2)
+where
+    S: Shape,
+    D: Device,
+    M0: Module<Tensor<S, D, f32>>,
+    M1: Module<M0::Output>,
+    M2: Module<M1::Output>,
+{
+    type Output = M2::Output;
+
+    fn forward(&self, xs: &Tensor<S, D, f32>) -> Self::Output {
+        let xs = self.0.forward(xs);
+        let xs = self.1.forward(&xs);
+        self.2.forward(&xs)
+    }
+}
+
 #[cfg(test)]
 mod tests {}
