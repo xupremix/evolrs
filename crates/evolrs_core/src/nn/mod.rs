@@ -12,9 +12,9 @@ pub trait Forward<const I: usize, const O: usize>: Shape {
     type ForwardShape: Shape;
 }
 
-pub trait Module<S: Shape, D: Device> {
+pub trait Module<T> {
     type Output: ToTchTensor;
-    fn forward(&self, xs: &Tensor<S, D, f32>) -> Self::Output;
+    fn forward(&self, xs: &T) -> Self::Output;
 }
 
 #[cfg(test)]

@@ -2,9 +2,12 @@ use std::marker::PhantomData;
 
 use tch::nn::{OptimizerConfig, VarStore};
 
-use crate::{device::Device, shapes::shape::Shape, tensor::ToTchTensor as _};
+use crate::{device::Device, shapes::shape::Shape, tensor::Tensor};
 
-use super::Module;
+pub trait Backward<T> {
+    const CHECK: ();
+    fn backward_step(&mut self, loss: &T);
+}
 
 pub struct Sgd<D: Device> {
     repr: tch::nn::Optimizer,
@@ -18,8 +21,15 @@ impl<D: Device> Sgd<D> {
             device: PhantomData,
         })
     }
+}
 
-    pub fn backward<S: Shape, M: Module<S, D>>(&mut self, loss: &M::Output) {
-        self.repr.backward_step(loss.to_tch());
+impl<S: Shape, D: Device> Backward<Tensor<S, D, f32>> for Sgd<D> {
+    const CHECK: () = assert!(
+        S::NELEMS == 1,
+        "The loss must be a Scalar or a Tensor with only 1 element"
+    );
+
+    fn backward_step(&mut self, loss: &Tensor<S, D, f32>) {
+        self.repr.backward_step(&loss.repr);
     }
 }

@@ -1,7 +1,5 @@
 use evolrs::{
-    device::Cpu,
-    nn::{modules::linear::Linear, optim::Sgd, Module},
-    shapes::shape::Rank3,
+    nn::{modules::linear::QuadLinear, Module},
     tch,
     tensor::Tensor3,
 };
@@ -9,11 +7,8 @@ use evolrs::{
 fn main() {
     let vs = tch::nn::VarStore::new(tch::Device::Cpu);
     let root = &vs.root();
-    let lin: Linear<3, 4> = Linear::new(root / "lin", Default::default());
-    let xs: Tensor3<1, 2, 3> = Tensor3::rand();
-    let mut sgd: Sgd<Cpu> = Sgd::new(&vs, 0.01).unwrap();
-
-    let l = lin.forward(&xs);
-
-    sgd.backward::<Rank3<1, 2, 3>, Linear<3, 4>>(&l);
+    let qlin = QuadLinear::new(root / "qlin");
+    let xs: Tensor3<30, 20, 10> = Tensor3::rand();
+    let l = qlin.forward(&xs);
+    l.print();
 }
