@@ -149,6 +149,7 @@ mod tests {
     use super::*;
     use crate::device::Cpu;
     use crate::shapes::shape::Rank2;
+    use crate::tensor::ToTchTensor;
 
     macro_rules! def_test {
         ($name:ident => $op:tt => $expected:expr => $type:ty => $change:ty) => {

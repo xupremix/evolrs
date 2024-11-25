@@ -66,6 +66,16 @@ pub type Tensor8<
     K = f32,
 > = Tensor<Rank8<D0, D1, D2, D3, D4, D5, D6, D7>, D, K>;
 
+pub trait ToTchTensor {
+    fn to_tch(&self) -> &tch::Tensor;
+}
+
+impl<S: Shape, D: Device, K: Kind> ToTchTensor for Tensor<S, D, K> {
+    fn to_tch(&self) -> &tch::Tensor {
+        &self.repr
+    }
+}
+
 #[must_use]
 pub struct Tensor<S: Shape, D: Device = Cpu, K: Kind = f32> {
     pub(crate) repr: tch::Tensor,
@@ -85,10 +95,6 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
 
     pub fn shape(&self) -> &[i64] {
         S::dims()
-    }
-
-    pub fn to_tch(&self) -> &tch::Tensor {
-        &self.repr
     }
 
     pub fn to_tch_mut(&mut self) -> &mut tch::Tensor {

@@ -23,8 +23,10 @@ impl<const I: usize, const O: usize, D: Device> Linear<I, O, D> {
     }
 }
 
-impl<const I: usize, const O: usize, D: Device> Module<I, O, D> for Linear<I, O, D> {
-    fn forward<S: Forward<I, O>>(&self, xs: &Tensor<S, D, f32>) -> Tensor<S::ForwardShape, D, f32> {
+impl<const I: usize, const O: usize, S: Forward<I, O>, D: Device> Module<S, D> for Linear<I, O, D> {
+    type Output = Tensor<S::ForwardShape, D, f32>;
+
+    fn forward(&self, xs: &Tensor<S, D, f32>) -> Self::Output {
         Tensor {
             repr: self.repr.forward(&xs.repr),
             ..Default::default()

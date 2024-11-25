@@ -40,7 +40,10 @@ mod comptime_fails_matmul {}
 
 #[cfg(test)]
 mod tests {
-    use crate::{shapes::shape::Rank2, tensor::Tensor};
+    use crate::{
+        shapes::shape::Rank2,
+        tensor::{Tensor, ToTchTensor as _},
+    };
 
     #[test]
     fn test_matmul() {
