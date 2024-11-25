@@ -1,8 +1,4 @@
-use crate::{
-    device::Device,
-    shapes::shape::Shape,
-    tensor::{Tensor, ToTchTensor},
-};
+use crate::shapes::shape::Shape;
 
 pub mod modules;
 pub mod optim;
@@ -13,7 +9,7 @@ pub trait Forward<const I: usize, const O: usize>: Shape {
 }
 
 pub trait Module<T> {
-    type Output: ToTchTensor;
+    type Output;
     fn forward(&self, xs: &T) -> Self::Output;
 }
 
