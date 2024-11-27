@@ -5,13 +5,13 @@
 // );
 
 // use evolrs::tch;
-
+use evolrs::shapes::shape::Rank3;
 use evolrs::tensor::Tensor2;
 
 fn main() {
-    let a: Tensor2<10, 20> = Tensor2::rand();
-    let ris = a.sum_dim::<1, false>();
-    ris.print();
+    let a: Tensor2<2, 3> = Tensor2::rand();
+    let v = a.view::<Rank3<1, 1, 6>>();
+    v.print();
 
     // let vs: Vs = Vs::new();
     // let root = &vs.root();
