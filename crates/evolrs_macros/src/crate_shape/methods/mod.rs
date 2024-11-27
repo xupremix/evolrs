@@ -12,12 +12,14 @@ mod argmin;
 mod matmul;
 mod squeeze;
 mod squeeze_dim;
+mod sum;
 mod unsqueeze;
 
 pub(crate) fn methods(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStream {
     let matmul = matmul::matmul(dims, name, dim_idents);
     let argmax = argmax::argmax(dims, name, dim_idents);
     let argmin = argmin::argmin(dims, name, dim_idents);
+    let sum = sum::sum(dims, name, dim_idents);
     let squeeze = squeeze::squeeze(dims, name, dim_idents);
     let squeeze_dim = squeeze_dim::squeeze_dim(dims, name, dim_idents);
     let unsqueeze = unsqueeze::unsqueeze(dims, name, dim_idents);
@@ -33,6 +35,7 @@ pub(crate) fn methods(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStr
         #matmul
         #argmax
         #argmin
+        #sum
         #squeeze
         #squeeze_dim
         #unsqueeze
@@ -44,6 +47,7 @@ pub(crate) fn methods(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStr
         #matmul
         #argmax
         #argmin
+        #sum
         #squeeze
         #squeeze_dim
         #unsqueeze

@@ -1,12 +1,6 @@
 // TODO: remove the operations from bool tensors
 // TODO: check for operations when S = Scalar
 
-- done
-// - add
-// - argmax
-// - argmin
-// - item (implemented as int64_value / double_value)
-
 // Sampling distributions
 // - bernoulli
 // - uniform
@@ -15,28 +9,6 @@
 // - log_normal_
 // - normal_
 // - random_
-
-// Rust traits in ops
-// - bitwise_not
-// - bitwise_anderfinv
-// - bitwise_or
-// - bitwise_xor
-// - bitwise_left_shift
-// - bitwise_right_shift
-// - clone? (check impl in mod.rs)
-// - copy (check impl) X
-// - eq X
-// - equal X
-// - ge
-// - gt
-// - le
-// - lt
-// - logical_and
-// - logical_not
-// - logical_or
-// - logical_xor
-// - ne X
-// - not_equal X
 
 // different:
 // - addbmm
@@ -60,8 +32,6 @@
 // - baddmm
 // - bincount
 // - bmm
-// - .type (equivalent to .to_dtype...)
-// - broadcast_to (equal to .expand)
 // - ceil
 // - cholesky
 // - cholesky_inverse
@@ -161,7 +131,7 @@
 // - masked_scatter
 // - masked_fill
 // - masked_select
-// - matmul (already impl check for hidden behavior like with broadcasting)
+// - matmul
 // - matrix_power
 // - matrix_exp
 // - max

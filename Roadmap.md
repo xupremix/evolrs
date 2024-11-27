@@ -34,7 +34,6 @@ X equal
 X not_equal
 
 backward
-
 dot
 mm
 multiply
