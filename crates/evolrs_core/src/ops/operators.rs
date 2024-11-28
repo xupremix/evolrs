@@ -1,13 +1,16 @@
+use crate::utils::Same;
 use crate::{
     device::Device,
     kind::{
         restriction::composite::{IntOrBool, NotBool},
-        type_coercion::{Coerce, DivCoerce, Same},
+        type_coercion::{Coerce, DivCoerce},
         Kind,
     },
     shapes::shape::Shape,
     tensor::Tensor,
 };
+
+// TODO: check if operators inherit gradient tracking
 
 macro_rules! op {
     ($( $kind:ident $coerce:ident $trait:ident $trait_:ident $fn:ident $tch_fn:ident $fn_:ident $tch_fn_:ident $($restr:ident)? ),* $(,)?) => {

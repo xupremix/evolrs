@@ -1,3 +1,4 @@
+use crate::tensor::RequiresGrad;
 use crate::{
     device::Device,
     kind::{qi32, qi8, qu8, Kind},
@@ -16,7 +17,7 @@ pub trait Item<S: Shape, T: Kind> {
 macro_rules! def_item {
     ($type:ty => $fn:ident $( $t:ident ),* $(,)?) => {
         $(
-            impl<S: Shape, D: Device> Item<S, $type> for Tensor<S, D, $t> {
+            impl<S: Shape, D: Device, G: RequiresGrad> Item<S, $type> for Tensor<S, D, $t, G> {
                 fn item(&self) -> $type {
                     #![allow(path_statements)]
                     Self::ITEM_CHECK;

@@ -19,6 +19,18 @@ impl Sgd {
             repr: tch::nn::Sgd::default().build(vs.vs(), lr)?,
         })
     }
+
+    pub fn step(&mut self) {
+        self.repr.step();
+    }
+
+    pub fn zero_grad(&mut self) {
+        self.repr.zero_grad();
+    }
+
+    pub fn set_momentum(&mut self, m: f64) {
+        self.repr.set_momentum(m);
+    }
 }
 
 impl<S: Shape, D: Device> Backward<Tensor<S, D, f32>> for Sgd {

@@ -5,6 +5,8 @@ use crate::{
     tensor::Tensor,
 };
 
+// TODO: check if logspace inherits gradient tracking or not
+
 pub trait LogspaceScalar {
     fn logspace<S: Into<tch::Scalar> + PartialOrd>(start: S, end: S, base: f64) -> Self;
 }

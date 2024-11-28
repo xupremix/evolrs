@@ -2,17 +2,18 @@ use crate::device::Device;
 use crate::kind::{
     restriction::composite::IntOrBool,
     scalar::IntoScalar,
-    type_coercion::{Coerce, DivCoerce, Same},
+    type_coercion::{Coerce, DivCoerce},
     Kind,
 };
 use crate::shapes::shape::Shape;
-use crate::tensor::Tensor;
+use crate::tensor::{RequiresGrad, Tensor};
+use crate::utils::Same;
 
 macro_rules! def_fn {
     ($( $coerce:ident $fn:ident $tch_fn:ident $fn_:ident $tch_fn_:ident $($restr:ident)?),* $(,)?) => {
         $(
-            impl<S: Shape, D: Device, K: Kind $(+ $restr)?> Tensor<S, D, K> {
-                pub fn $fn<T: IntoScalar $(+ $restr)?>(&self, rhs: T) -> Tensor<S, D, K::To>
+            impl<S: Shape, D: Device, K: Kind $(+ $restr)?, G: RequiresGrad> Tensor<S, D, K, G> {
+                pub fn $fn<T: IntoScalar $(+ $restr)?>(&self, rhs: T) -> Tensor<S, D, K::To, G>
                 where
                     K: $coerce<T>
                 {
@@ -21,7 +22,7 @@ macro_rules! def_fn {
                         ..Default::default()
                     }
                 }
-                pub fn $fn_<T: IntoScalar $(+ $restr)?>(&mut self, rhs: T) -> Tensor<S, D, K>
+                pub fn $fn_<T: IntoScalar $(+ $restr)?>(&mut self, rhs: T) -> Tensor<S, D, K, G>
                 where
                     K: $coerce<T> + Same<K::To>
                 {

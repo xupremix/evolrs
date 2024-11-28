@@ -1,11 +1,12 @@
 use crate::device::Device;
 use crate::kind::{
     restriction::composite::IntOrBool,
-    type_coercion::{Coerce, DivCoerce, Same},
+    type_coercion::{Coerce, DivCoerce},
     Kind,
 };
 use crate::shapes::shape::Shape;
 use crate::tensor::Tensor;
+use crate::utils::Same;
 
 #[cfg(feature = "broadcast-semantics")]
 use crate::shapes::broadcast::{Broadcast, BroadcastInplace};

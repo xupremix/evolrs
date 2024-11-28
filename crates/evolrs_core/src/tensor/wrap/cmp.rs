@@ -5,6 +5,8 @@ use crate::{
     tensor::Tensor,
 };
 
+// TODO: check if logical operators inherit gradient tracking
+
 macro_rules! cmp {
     ($( $n_t:ident $tch_t:ident $( $n_s:ident $tch_s:ident )?);* $(;)?) => {
         $(

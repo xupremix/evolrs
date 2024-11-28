@@ -1,6 +1,3 @@
-// TODO: remove the operations from bool tensors
-// TODO: check for operations when S = Scalar
-
 // Sampling distributions
 // - bernoulli
 // - uniform

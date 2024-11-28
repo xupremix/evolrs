@@ -1,7 +1,11 @@
 use std::fmt::Debug;
 use std::hash::Hash;
 
-pub trait Device: 'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash {
+use crate::utils::Sealed;
+
+pub trait Device:
+    'static + Debug + Clone + Copy + Send + Sync + PartialEq + Eq + Hash + Sealed
+{
     fn into_device() -> tch::Device;
 }
 
@@ -9,6 +13,8 @@ macro_rules! device {
     ($n:ident $t:ident $($v:ident)?) => {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
         pub struct $n $(<const $v: usize>)?;
+
+        impl $(<const $v: usize>)? Sealed for $n $(<$v>)? {}
 
         impl $(<const $v: usize>)? Device for $n $(<$v>)? {
             fn into_device() -> tch::Device {

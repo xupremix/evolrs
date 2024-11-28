@@ -26,6 +26,14 @@ impl<D: Device> Vs<D> {
     pub fn vs_mut(&mut self) -> &mut tch::nn::VarStore {
         &mut self.repr
     }
+
+    pub fn freeze(&mut self) {
+        self.repr.freeze()
+    }
+
+    pub fn unfreeze(&mut self) {
+        self.repr.unfreeze()
+    }
 }
 
 impl<D: Device> Default for Vs<D> {

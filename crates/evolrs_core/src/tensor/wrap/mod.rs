@@ -22,6 +22,7 @@ pub mod view;
 // or how to import from the Shape::Shape type without the usage of
 // unsafe and taking ownership of the data without dropping it.
 // Another type parameter could be its memory format (eg. contiguous)
+// Also check what methods inherit gradient tracking and which don't
 //
 // TLDR:
 // ( Extra generic params )

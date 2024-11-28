@@ -1,4 +1,9 @@
-use crate::{device::Device, kind::Kind, shapes::shape::Shape, tensor::Tensor};
+use crate::{
+    device::Device,
+    kind::Kind,
+    shapes::shape::Shape,
+    tensor::{RequiresGrad, Tensor},
+};
 
 // Argmin
 // keep_dim makes it so that the output tensor shape has the same number of
@@ -18,7 +23,7 @@ pub trait ArgminShape<const DIM: i64, const KEEP_DIM: bool>: Shape {
     type ArgminShape: Shape;
 }
 
-impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
+impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
     pub fn argmim<const DIM: i64, const KEEP_DIM: bool>(&self) -> Tensor<S::ArgminShape, D, K>
     where
         S: ArgminShape<DIM, KEEP_DIM>,

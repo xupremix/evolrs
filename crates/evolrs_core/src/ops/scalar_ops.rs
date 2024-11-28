@@ -1,9 +1,12 @@
 use crate::kind::{
     restriction::composite::IntOrBool,
     scalar::IntoScalar,
-    type_coercion::{Coerce, DivCoerce, Same},
+    type_coercion::{Coerce, DivCoerce},
 };
+use crate::utils::Same;
 use crate::{device::Device, shapes::shape::Shape, tensor::Tensor};
+
+// TODO: check if operators inherit gradient tracking
 
 macro_rules! op {
     ($($coerce:ident $trait:ident $assign_trait:ident $method:ident $tch_method:ident $assign_method:ident $tch_assign_method:ident $($restr:ident)?),* $(,)?) => {

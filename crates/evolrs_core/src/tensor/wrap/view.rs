@@ -1,4 +1,9 @@
-use crate::{device::Device, kind::Kind, shapes::shape::Shape, tensor::Tensor};
+use crate::{
+    device::Device,
+    kind::Kind,
+    shapes::shape::Shape,
+    tensor::{RequiresGrad, Tensor},
+};
 
 pub trait View<Src: Shape>: Shape {
     const VIEW_CHECK: ();
@@ -11,8 +16,10 @@ impl<S: Shape, D: Shape> View<S> for D {
     );
 }
 
-impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
-    pub fn view<S2: View<S>>(&self) -> Tensor<S2, D, K> {
+// TODO: check if view_as inherits gradient tracking
+
+impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
+    pub fn view<S2: View<S>>(&self) -> Tensor<S2, D, K, G> {
         #![allow(path_statements)]
         S2::VIEW_CHECK;
         Tensor {
@@ -21,7 +28,7 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
         }
     }
 
-    pub fn view_copy<S2: View<S>>(&self) -> Tensor<S2, D, K> {
+    pub fn view_copy<S2: View<S>>(&self) -> Tensor<S2, D, K, G> {
         #![allow(path_statements)]
         S2::VIEW_CHECK;
         Tensor {
@@ -32,8 +39,8 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
 
     pub fn view_as<S2: View<S>, D2: Device, K2: Kind>(
         &self,
-        other: &Tensor<S2, D2, K2>,
-    ) -> Tensor<S2, D, K> {
+        other: &Tensor<S2, D2, K2, G>,
+    ) -> Tensor<S2, D, K, G> {
         #![allow(path_statements)]
         S2::VIEW_CHECK;
         Tensor {

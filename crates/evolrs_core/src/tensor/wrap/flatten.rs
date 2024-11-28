@@ -2,7 +2,7 @@ use crate::{
     device::Device,
     kind::Kind,
     shapes::shape::{Rank1, Shape},
-    tensor::Tensor,
+    tensor::{RequiresGrad, Tensor},
 };
 
 pub trait Flatten<S: Shape>: Shape {
@@ -20,7 +20,7 @@ impl<const NELEMS: usize, S: Shape> Flatten<S> for Rank1<NELEMS> {
     );
 }
 
-impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
+impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
     pub fn flatten<N: Flatten<S>>(&self) -> Tensor<N, D, K> {
         N::comptime_check();
         Tensor {

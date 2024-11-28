@@ -1,6 +1,16 @@
-use evolrs::shapes::shape::Tensor2;
+use evolrs::{
+    nn::{
+        optim::{Backward, Sgd},
+        vs::Vs,
+    },
+    shapes::shape::Tensor1,
+};
 
 fn main() {
-    let t: Tensor2<10, 20> = Tensor2::rand();
-    t.print();
+    let vs: Vs = Vs::new();
+    let mut sgd = Sgd::new(&vs, 0.01).unwrap();
+
+    let mut loss: Tensor1<10> = Tensor1::randn();
+    let loss = loss.set_require_grad();
+    sgd.backward_step(&loss.sum());
 }

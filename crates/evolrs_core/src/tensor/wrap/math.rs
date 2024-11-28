@@ -1,11 +1,12 @@
 use crate::device::Device;
 use crate::kind::Kind;
 use crate::shapes::shape::Shape;
+use crate::tensor::RequiresGrad;
 use crate::tensor::Tensor;
 
 macro_rules! wrap {
     ($( [ $f1:ident - $f2:ident ] ),* $(,)?) => {
-        impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K> {
+        impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
             $(
                 pub fn $f1(&self) -> Tensor<S, D, K> {
                     Tensor {

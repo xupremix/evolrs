@@ -3,9 +3,6 @@ use super::f16;
 
 use super::{c16, c32, c64, Kind};
 
-pub trait Same<T> {}
-impl<T> Same<T> for T {}
-
 pub trait Coerce<Base: Kind>: Kind {
     type To: Kind;
 }
@@ -366,6 +363,7 @@ def_coercion! {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::utils::Same;
     fn same<U, T: Same<U>>() {}
 
     macro_rules! def_test {

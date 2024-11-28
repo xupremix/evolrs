@@ -5,6 +5,8 @@ use crate::{
     tensor::Tensor,
 };
 
+// TODO: check if linspace inherits gradient tracking or not
+
 pub trait LinspaceScalar {
     fn linspace<S: Into<tch::Scalar> + PartialOrd>(start: S, end: S) -> Self;
 }
