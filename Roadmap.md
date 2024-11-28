@@ -19,25 +19,10 @@ X TypeCoercion
 Distribution generation
 
 # Tensor API implementations necessary before layer implementation
-X add
-X sub
-X div
-X mul
-X argmax
-X argmin
-X item
-X unsqueeze
-X squeeze
-X eq
-X ne
-X equal
-X not_equal
-
 backward
 dot
 mm
 multiply
-
 
 # Optimizers
 

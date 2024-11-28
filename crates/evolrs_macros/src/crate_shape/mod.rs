@@ -1,5 +1,5 @@
 use parse_args::Args;
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::Ident;
 
@@ -12,16 +12,16 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let dims: i64 = args.dims.base10_parse().expect("expected integer literal");
 
     let name = if dims == 0 {
-        Ident::new("Scalar", proc_macro2::Span::call_site())
+        Ident::new("Scalar", Span::call_site())
     } else {
-        Ident::new(&format!("Rank{}", dims), proc_macro2::Span::call_site())
+        Ident::new(&format!("Rank{}", dims), Span::call_site())
     };
 
     let dim_idents = (0..dims)
-        .map(|i| Ident::new(&format!("D{}", i), proc_macro2::Span::call_site()))
+        .map(|i| Ident::new(&format!("D{}", i), Span::call_site()))
         .collect::<Vec<_>>();
     let nelems = if dims == 0 {
-        quote! { 0 }
+        quote! { 1 }
     } else {
         quote! { 1 #(* #dim_idents)* }
     };
@@ -34,6 +34,7 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
     let methods = methods::methods(dims, &name, &dim_idents);
     let nn = nn::methods(dims, &name, &dim_idents);
+    let type_alias = gen_type_alias(dims, &name, &dim_idents);
 
     quote! {
         #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -50,8 +51,23 @@ pub(crate) fn shape(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
         #methods
         #nn
+
+        #type_alias
     }
     .into()
+}
+
+fn gen_type_alias(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStream {
+    if dims == 0 {
+        return quote! {
+            pub type TensorS<D = crate::device::Cpu, K = f32> = crate::tensor::Tensor<Scalar, D, K>;
+        };
+    }
+    let tname = Ident::new(&format!("Tensor{}", dims), Span::call_site());
+    let const_generics = dim_idents.iter().map(|d| quote! { const #d: usize });
+    quote! {
+        pub type #tname<#(#const_generics,)* D = crate::device::Cpu, K = f32> = crate::tensor::Tensor<#name<#(#dim_idents),*>, D, K>;
+    }
 }
 
 fn gen_shape(dims: i64, curr: usize) -> TokenStream {

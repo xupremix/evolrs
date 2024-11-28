@@ -5,7 +5,7 @@ use tch::nn::{LinearConfig, Module as _};
 use crate::{
     device::{Cpu, Device},
     nn::{Forward, Module},
-    // shapes::shape::Shape,
+    shapes::shape::Shape,
     tensor::Tensor,
 };
 

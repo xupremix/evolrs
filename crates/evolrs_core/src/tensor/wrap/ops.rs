@@ -43,6 +43,8 @@ macro_rules! def_fn {
                 where
                     K: Same<K2::To>
                 {
+                    #![allow(path_statements)]
+                    Rhs::BROADCAST_INPLACE_CHECK;
                     Tensor {
                         repr: self.repr.$tch_fn_(&rhs.repr),
                         ..Default::default()
