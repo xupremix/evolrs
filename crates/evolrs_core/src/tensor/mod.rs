@@ -14,7 +14,7 @@ pub trait ToTchTensor {
     fn to_tch(&self) -> &tch::Tensor;
 }
 
-impl<S: Shape, D: Device, K: Kind> ToTchTensor for Tensor<S, D, K> {
+impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> ToTchTensor for Tensor<S, D, K, G> {
     fn to_tch(&self) -> &tch::Tensor {
         &self.repr
     }

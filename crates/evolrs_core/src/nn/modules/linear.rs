@@ -5,8 +5,7 @@ use tch::nn::{LinearConfig, Module as _};
 use crate::{
     device::{Cpu, Device},
     nn::{Forward, Module},
-    shapes::shape::Shape,
-    tensor::Tensor,
+    tensor::{Grad, RequiresGrad, Tensor},
 };
 
 #[derive(Debug)]
@@ -24,12 +23,12 @@ impl<const I: usize, const O: usize, D: Device> Linear<I, O, D> {
     }
 }
 
-impl<const I: usize, const O: usize, S: Forward<I, O>, D: Device> Module<Tensor<S, D, f32>>
-    for Linear<I, O, D>
+impl<const I: usize, const O: usize, S: Forward<I, O>, D: Device, G: RequiresGrad>
+    Module<Tensor<S, D, f32, G>> for Linear<I, O, D>
 {
-    type Output = Tensor<S::ForwardShape, D, f32>;
+    type Output = Tensor<S::ForwardShape, D, f32, Grad>;
 
-    fn forward(&self, xs: &Tensor<S, D, f32>) -> Self::Output {
+    fn forward(&self, xs: &Tensor<S, D, f32, G>) -> Self::Output {
         Tensor {
             repr: self.repr.forward(&xs.repr),
             ..Default::default()
