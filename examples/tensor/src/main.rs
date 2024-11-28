@@ -14,5 +14,7 @@ fn main() {
 
     let r = Tensor2::<10, 10, Cpu, f32, Grad>::default();
 
-    sgd.backward_step(&r.sum());
+    let a = r.empty_like().set_require_grad();
+
+    sgd.backward_step(&a.sum());
 }

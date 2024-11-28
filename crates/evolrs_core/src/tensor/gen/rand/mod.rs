@@ -18,8 +18,8 @@ impl<S: Shape, D: Device, K: FloatOrComplex> Tensor<S, D, K, NoGrad> {
     }
 }
 impl<S: Shape, D: Device, K: FloatOrComplex, G: RequiresGrad> Tensor<S, D, K, G> {
-    pub fn rand_like(&self) -> Self {
-        Self {
+    pub fn rand_like(&self) -> Tensor<S, D, K, NoGrad> {
+        Tensor {
             repr: self.repr.rand_like(),
             ..Default::default()
         }

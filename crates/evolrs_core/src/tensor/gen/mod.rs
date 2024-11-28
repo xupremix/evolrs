@@ -15,26 +15,26 @@ pub mod logspace;
 pub mod rand;
 
 impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
-    pub fn new_like(&self) -> Self {
-        Default::default()
+    pub fn new_like(&self) -> Tensor<S, D, K, NoGrad> {
+        Tensor::new()
     }
 
-    pub fn empty_like(&self) -> Self {
-        Self {
+    pub fn empty_like(&self) -> Tensor<S, D, K, NoGrad> {
+        Tensor {
             repr: tch::Tensor::empty_like(&self.repr),
             ..Default::default()
         }
     }
 
-    pub fn zeros_like(&self) -> Self {
-        Self {
+    pub fn zeros_like(&self) -> Tensor<S, D, K, NoGrad> {
+        Tensor {
             repr: tch::Tensor::zeros_like(&self.repr),
             ..Default::default()
         }
     }
 
-    pub fn ones_like(&self) -> Self {
-        Self {
+    pub fn ones_like(&self) -> Tensor<S, D, K, NoGrad> {
+        Tensor {
             repr: tch::Tensor::ones_like(&self.repr),
             ..Default::default()
         }
