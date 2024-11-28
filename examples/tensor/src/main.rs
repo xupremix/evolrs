@@ -1,16 +1,18 @@
 use evolrs::{
+    device::Cpu,
     nn::{
         optim::{Backward, Sgd},
         vs::Vs,
     },
-    shapes::shape::Tensor1,
+    shapes::shape::Tensor2,
+    tensor::Grad,
 };
 
 fn main() {
     let vs: Vs = Vs::new();
     let mut sgd = Sgd::new(&vs, 0.01).unwrap();
 
-    let loss: Tensor1<10> = Tensor1::randn();
-    let loss = loss.set_require_grad();
-    sgd.backward_step(&loss.sum());
+    let r = Tensor2::<10, 10, Cpu, f32, Grad>::default();
+
+    sgd.backward_step(&r.sum());
 }

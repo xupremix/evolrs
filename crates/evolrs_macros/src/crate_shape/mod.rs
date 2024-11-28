@@ -66,7 +66,7 @@ fn gen_type_alias(dims: i64, name: &Ident, dim_idents: &[Ident]) -> TokenStream 
     let tname = Ident::new(&format!("Tensor{}", dims), Span::call_site());
     let const_generics = dim_idents.iter().map(|d| quote! { const #d: usize });
     quote! {
-        pub type #tname<#(#const_generics,)* D = crate::device::Cpu, K = f32> = crate::tensor::Tensor<#name<#(#dim_idents),*>, D, K>;
+        pub type #tname<#(#const_generics,)* D = crate::device::Cpu, K = f32, G = crate::tensor::NoGrad> = crate::tensor::Tensor<#name<#(#dim_idents),*>, D, K, G>;
     }
 }
 
