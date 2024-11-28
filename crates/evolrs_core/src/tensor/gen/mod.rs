@@ -15,10 +15,6 @@ pub mod logspace;
 pub mod rand;
 
 impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
-    pub fn new() -> Self {
-        Default::default()
-    }
-
     pub fn new_like(&self) -> Self {
         Default::default()
     }
@@ -46,6 +42,13 @@ impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
 }
 
 impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K, NoGrad> {
+    pub fn new() -> Self {
+        Self {
+            repr: tch::Tensor::new(),
+            ..Default::default()
+        }
+    }
+
     pub fn empty() -> Self {
         Self {
             repr: tch::Tensor::empty(S::dims(), (K::into_dtype(), D::into_device())),

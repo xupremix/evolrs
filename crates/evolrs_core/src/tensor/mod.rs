@@ -89,7 +89,7 @@ impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K, Grad> {
 
 impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Default for Tensor<S, D, K, G> {
     fn default() -> Self {
-        let mut repr = tch::Tensor::default();
+        let mut repr = tch::Tensor::empty(S::dims(), (K::into_dtype(), D::into_device()));
         let _ = repr.requires_grad_(G::REQUIRES_GRAD);
         Self {
             repr,
