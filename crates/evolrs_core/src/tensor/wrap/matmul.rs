@@ -52,7 +52,7 @@ mod tests {
         let t1: Tensor<Rank2<2, 3>> = Tensor::ones();
         let t2: Tensor<Rank2<3, 4>> = Tensor::ones();
         let t3 = t1.matmul(&t2);
-        assert!(t3.to_tch().equal(&tch::Tensor::from_slice2(&[
+        assert!(t3.to_tch_tensor().equal(&tch::Tensor::from_slice2(&[
             [3., 3., 3., 3.],
             [3., 3., 3., 3.]
         ])));

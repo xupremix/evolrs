@@ -4,7 +4,8 @@ use tch::nn::{LinearConfig, Module as _};
 
 use crate::{
     device::{Cpu, Device},
-    nn::{Forward, Module},
+    nn::{vs::Vs, Forward, Module},
+    shapes::shape::Shape,
     tensor::{Grad, RequiresGrad, Tensor},
 };
 
@@ -33,6 +34,11 @@ impl<const I: usize, const O: usize, S: Forward<I, O>, D: Device, G: RequiresGra
             repr: self.repr.forward(&xs.repr),
             ..Default::default()
         }
+    }
+
+    type Config = LinearConfig;
+    fn step(vs: &Vs, c: Self::Config, seq: tch::nn::Sequential) -> tch::nn::Sequential {
+        seq.add(tch::nn::linear(vs.root(), I as i64, O as i64, c))
     }
 }
 
@@ -89,22 +95,6 @@ impl<const I: usize, const O: usize, S: Forward<I, O>, D: Device, G: RequiresGra
 //     }
 // }
 //
-// impl<S, D, M0, M1, M2> Module<Tensor<S, D, f32>> for (M0, M1, M2)
-// where
-//     S: Shape,
-//     D: Device,
-//     M0: Module<Tensor<S, D, f32>>,
-//     M1: Module<M0::Output>,
-//     M2: Module<M1::Output>,
-// {
-//     type Output = M2::Output;
-//
-//     fn forward(&self, xs: &Tensor<S, D, f32>) -> Self::Output {
-//         let xs = self.0.forward(xs);
-//         let xs = self.1.forward(&xs);
-//         self.2.forward(&xs)
-//     }
-// }
 
 #[cfg(test)]
 mod tests {}

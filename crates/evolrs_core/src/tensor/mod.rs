@@ -11,11 +11,11 @@ use crate::{
 };
 
 pub trait ToTchTensor {
-    fn to_tch(&self) -> &tch::Tensor;
+    fn to_tch_tensor(&self) -> &tch::Tensor;
 }
 
 impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> ToTchTensor for Tensor<S, D, K, G> {
-    fn to_tch(&self) -> &tch::Tensor {
+    fn to_tch_tensor(&self) -> &tch::Tensor {
         &self.repr
     }
 }

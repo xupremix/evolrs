@@ -161,22 +161,22 @@ mod tests {
                 let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t3: Tensor<Rank2<2, 3>, Cpu, $change> = t1 $op t2;
-                assert_eq!(t3.to_tch().sum(None), $expected);
+                assert_eq!(t3.to_tch_tensor().sum(None), $expected);
 
                 let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t3: Tensor<Rank2<2, 3>, Cpu, $change> = &t1 $op t2;
-                assert_eq!(t3.to_tch().sum(None), $expected);
+                assert_eq!(t3.to_tch_tensor().sum(None), $expected);
 
                 let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t3: Tensor<Rank2<2, 3>, Cpu, $change> = t1 $op &t2;
-                assert_eq!(t3.to_tch().sum(None), $expected);
+                assert_eq!(t3.to_tch_tensor().sum(None), $expected);
 
                 let t1: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t2: Tensor<Rank2<2, 3>, Cpu, $type> = Tensor::ones();
                 let t3: Tensor<Rank2<2, 3>, Cpu, $change> = &t1 $op &t2;
-                assert_eq!(t3.to_tch().sum(None), $expected);
+                assert_eq!(t3.to_tch_tensor().sum(None), $expected);
             }
         };
         (@assign $name:ident => $op:tt => $expected:expr) => {
@@ -185,7 +185,7 @@ mod tests {
                 let mut t1: Tensor<crate::shapes::shape::Rank2<2, 3>> = Tensor::ones();
                 let t2: Tensor<crate::shapes::shape::Rank2<2, 3>> = Tensor::ones();
                 t1 $op t2;
-                assert_eq!(t1.to_tch().sum(None), $expected);
+                assert_eq!(t1.to_tch_tensor().sum(None), $expected);
             }
         };
     }
