@@ -1,10 +1,11 @@
+use std::marker::PhantomData;
+
 use crate::device::Device;
 use crate::kind::Kind;
 use crate::tensor::Shape;
 use crate::tensor::Tensor;
 
-use super::NoGrad;
-use super::RequiresGrad;
+use super::{NoGrad, RequiresGrad, Sealed, Uninitialized};
 
 pub mod arange;
 pub mod dist;
@@ -14,8 +15,8 @@ pub mod linspace;
 pub mod logspace;
 pub mod rand;
 
-impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
-    pub fn new_like(&self) -> Tensor<S, D, K, NoGrad> {
+impl<S: Shape, D: Device, K: Kind, G: RequiresGrad, I: Sealed> Tensor<S, D, K, G, I> {
+    pub fn new_like(&self) -> Tensor<S, D, K, NoGrad, Uninitialized> {
         Tensor::new()
     }
 
@@ -41,14 +42,20 @@ impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
     }
 }
 
-impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K, NoGrad> {
+impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K, NoGrad, Uninitialized> {
     pub fn new() -> Self {
         Self {
             repr: tch::Tensor::new(),
-            ..Default::default()
+            shape: PhantomData,
+            device: PhantomData,
+            dtype: PhantomData,
+            grad: PhantomData,
+            init: PhantomData,
         }
     }
+}
 
+impl<S: Shape, D: Device, K: Kind> Tensor<S, D, K, NoGrad> {
     pub fn empty() -> Self {
         Self {
             repr: tch::Tensor::empty(S::dims(), (K::into_dtype(), D::into_device())),

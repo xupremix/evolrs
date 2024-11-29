@@ -26,9 +26,9 @@ pub mod view;
 //
 // TLDR:
 // ( Extra generic params )
-// - Memory Format
-// - Initialization
 // - Requires Gradient
+// - Initialization
+// - Memory Format
 // - Pin
 //
 // ( Implementation )

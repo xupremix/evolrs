@@ -34,16 +34,28 @@ impl RequiresGrad for NoGrad {
     const REQUIRES_GRAD: bool = false;
 }
 
+pub struct Initialized;
+pub struct Uninitialized;
+impl Sealed for Initialized {}
+impl Sealed for Uninitialized {}
+
 #[must_use]
-pub struct Tensor<S: Shape, D: Device = Cpu, K: Kind = f32, G: RequiresGrad = NoGrad> {
+pub struct Tensor<
+    S: Shape,
+    D: Device = Cpu,
+    K: Kind = f32,
+    G: RequiresGrad = NoGrad,
+    I: Sealed = Initialized,
+> {
     pub(crate) repr: tch::Tensor,
     pub(crate) shape: PhantomData<S>,
     pub(crate) device: PhantomData<D>,
     pub(crate) dtype: PhantomData<K>,
     pub(crate) grad: PhantomData<G>,
+    pub(crate) init: PhantomData<I>,
 }
 
-impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Tensor<S, D, K, G> {
+impl<S: Shape, D: Device, K: Kind, G: RequiresGrad, I: Sealed> Tensor<S, D, K, G, I> {
     pub const fn dims(&self) -> i64 {
         S::DIMS
     }
@@ -97,6 +109,7 @@ impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> Default for Tensor<S, D, K, 
             device: PhantomData,
             dtype: PhantomData,
             grad: PhantomData,
+            init: PhantomData,
         }
     }
 }
