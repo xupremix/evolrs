@@ -1,10 +1,10 @@
 use std::{borrow::Borrow, marker::PhantomData};
 
-use tch::nn::{LinearConfig, Module as _};
+use tch::nn::{LinearConfig, Module as _, Sequential};
 
 use crate::{
     device::{Cpu, Device},
-    nn::{vs::Vs, Forward, Module},
+    nn::{build::ModelBuilder, vs::Vs, Forward, Module},
     shapes::shape::Shape,
     tensor::{Grad, RequiresGrad, Tensor},
 };
@@ -35,9 +35,12 @@ impl<const I: usize, const O: usize, S: Forward<I, O>, D: Device, G: RequiresGra
             ..Default::default()
         }
     }
+}
 
+impl<const I: usize, const O: usize, D: Device> ModelBuilder for Linear<I, O, D> {
     type Config = LinearConfig;
-    fn step(vs: &Vs, c: Self::Config, seq: tch::nn::Sequential) -> tch::nn::Sequential {
+
+    fn step(vs: &Vs, c: Self::Config, seq: Sequential) -> Sequential {
         seq.add(tch::nn::linear(vs.root(), I as i64, O as i64, c))
     }
 }

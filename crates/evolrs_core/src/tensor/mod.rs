@@ -14,6 +14,19 @@ pub trait ToTchTensor {
     fn to_tch_tensor(&self) -> &tch::Tensor;
 }
 
+pub(crate) trait FromTchTensor {
+    fn from_tch_tensor(repr: tch::Tensor) -> Self;
+}
+
+impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> FromTchTensor for Tensor<S, D, K, G> {
+    fn from_tch_tensor(repr: tch::Tensor) -> Self {
+        Tensor {
+            repr,
+            ..Default::default()
+        }
+    }
+}
+
 impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> ToTchTensor for Tensor<S, D, K, G> {
     fn to_tch_tensor(&self) -> &tch::Tensor {
         &self.repr

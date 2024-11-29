@@ -2,49 +2,24 @@ use std::marker::PhantomData;
 
 use crate::{
     device::Device,
-    kind::Kind,
     shapes::shape::Shape,
-    tensor::{RequiresGrad, Tensor, ToTchTensor},
+    tensor::{FromTchTensor, Tensor, ToTchTensor},
 };
 
+pub mod build;
 pub mod modules;
 pub mod optim;
 pub mod vs;
 
-use tch::nn::{seq, Module as _, Sequential};
-use vs::Vs;
+use tch::nn::{Module as _, Sequential};
 
 pub trait Forward<const I: usize, const O: usize>: Shape {
     type ForwardShape: Shape;
 }
 
-pub(crate) trait FromTchTensor {
-    fn from_tch_tensor(repr: tch::Tensor) -> Self;
-}
-
-impl<S: Shape, D: Device, K: Kind, G: RequiresGrad> FromTchTensor for Tensor<S, D, K, G> {
-    fn from_tch_tensor(repr: tch::Tensor) -> Self {
-        Tensor {
-            repr,
-            ..Default::default()
-        }
-    }
-}
-
-pub trait Module<T>: Sized {
+pub trait Module<T> {
     type Output: FromTchTensor;
     fn forward(&self, xs: &T) -> Self::Output;
-
-    type Config;
-    fn build(vs: &Vs, c: Self::Config) -> Model<Self> {
-        let repr = seq();
-        let repr = Self::step(vs, c, repr);
-        Model {
-            repr,
-            module: PhantomData,
-        }
-    }
-    fn step(vs: &Vs, c: Self::Config, seq: Sequential) -> Sequential;
 }
 
 pub struct Model<M> {
@@ -60,12 +35,6 @@ where
 
     fn forward(&self, xs: &T) -> Self::Output {
         M::Output::from_tch_tensor(self.repr.forward(xs.to_tch_tensor()))
-    }
-
-    type Config = M::Config;
-
-    fn step(vs: &Vs, c: Self::Config, seq: Sequential) -> Sequential {
-        M::step(vs, c, seq)
     }
 }
 
@@ -83,13 +52,6 @@ where
         let xs = self.0.forward(xs);
         let xs = self.1.forward(&xs);
         self.2.forward(&xs)
-    }
-
-    type Config = (M0::Config, M1::Config, M2::Config);
-    fn step(vs: &Vs, c: Self::Config, seq: tch::nn::Sequential) -> tch::nn::Sequential {
-        let seq = M0::step(vs, c.0, seq);
-        let seq = M1::step(vs, c.1, seq);
-        M2::step(vs, c.2, seq)
     }
 }
 
