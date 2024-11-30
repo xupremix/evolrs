@@ -16,7 +16,6 @@ X InplaceBroadcasting
 X TypeCoercion
 
 # Tensor Creation APIs
-Distribution generation
 
 # Tensor API implementations necessary before layer implementation
 backward

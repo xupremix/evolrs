@@ -2,6 +2,7 @@ pub mod argmax;
 pub mod argmin;
 pub mod cmp;
 pub mod flatten;
+pub mod func;
 pub mod item;
 pub mod math;
 pub mod matmul;
@@ -34,3 +35,26 @@ pub mod view;
 // ( Implementation )
 // implementation of from for tensor for arrays
 // without using `unsafe from_blob`
+//
+// Losses: _loss (or divergence) functions
+// L1
+// MSE
+// CrossEntropy
+// CTC
+// NLL
+// PoissonNLL
+// GaussianNLL (Not present)
+// KL
+// BCE
+// BCEWithLogits
+// MarginRanking
+// HingeEmbedding
+// MultiLabelMargin
+// Huber
+// SmoothL1
+// SoftMargin
+// MultiLabelSoftMargin
+// CosineEmbedding
+// MultiMargin
+// TripletMargin
+// TripleMarginWithDistance (Not present)

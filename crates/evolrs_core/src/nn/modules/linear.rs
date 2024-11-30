@@ -5,7 +5,6 @@ use tch::nn::{LinearConfig, Module as _, Sequential};
 use crate::{
     device::{Cpu, Device},
     nn::{build::ModelBuilder, vs::Vs, Forward, Module},
-    shapes::shape::Shape,
     tensor::{Grad, RequiresGrad, Tensor},
 };
 

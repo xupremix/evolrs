@@ -1,3 +1,7 @@
+// Distance fns
+cosine_similarity (built as an instance method)
+pairwise_distance (built as an instance method)
+
 // Sampling distributions
 // - bernoulli
 // - uniform

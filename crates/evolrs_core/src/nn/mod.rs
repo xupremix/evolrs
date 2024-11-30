@@ -11,7 +11,9 @@ pub mod modules;
 pub mod optim;
 pub mod vs;
 
+use build::ModelBuilder;
 use tch::nn::{Module as _, Sequential};
+use vs::Vs;
 
 pub trait Forward<const I: usize, const O: usize>: Shape {
     type ForwardShape: Shape;
@@ -27,6 +29,12 @@ pub struct Model<M> {
     module: PhantomData<M>,
 }
 
+impl<M> Model<M> {
+    pub fn print(&self) {
+        println!("{:#?}", self.repr);
+    }
+}
+
 impl<T, M: Module<T>> Module<T> for Model<M>
 where
     T: ToTchTensor,
@@ -37,6 +45,8 @@ where
         M::Output::from_tch_tensor(self.repr.forward(xs.to_tch_tensor()))
     }
 }
+
+// Testing implementation of Module for a tuple of modules
 
 impl<S, D, M0, M1, M2> Module<Tensor<S, D, f32>> for (M0, M1, M2)
 where
@@ -52,6 +62,19 @@ where
         let xs = self.0.forward(xs);
         let xs = self.1.forward(&xs);
         self.2.forward(&xs)
+    }
+}
+
+// Testing implementation of Model Builder for a tuple of Model Builders
+
+impl<M0: ModelBuilder, M1: ModelBuilder, M2: ModelBuilder> ModelBuilder for (M0, M1, M2) {
+    type Config = (M0::Config, M1::Config, M2::Config);
+
+    fn step(vs: &Vs, c: Self::Config, seq: Sequential) -> Sequential {
+        let (c0, c1, c2) = c;
+        let seq = M0::step(vs, c0, seq);
+        let seq = M1::step(vs, c1, seq);
+        M2::step(vs, c2, seq)
     }
 }
 
